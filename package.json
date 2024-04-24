@@ -1,0 +1,14 @@
+{
+  "name": "tuid",
+  "version": "0.0.1",
+  "description": "Transport Unit Identifier",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Lewis Andrew Campbell",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  }
+}
