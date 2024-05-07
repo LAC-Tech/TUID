@@ -1,7 +1,9 @@
 /**
  * @typedef {"storey" | "ground"} ElevationType
- *
- * @type {(longitude: number, latitude: number, elevation: )}
+ * @param {number} longitude
+ * @param {number} latitude
+ * @param {number} elevation
+ * @param {ElevationType} elevationType
  */
 const Identifier = (longitude, latitude, elevation, elevationType) => {
 	throw 'TODO'
@@ -13,15 +15,49 @@ const encodePoint = (longitude, latitude) => {
 
 const encodeLongitude = longitude => { throw 'TODO '}
 
-const encodeLongitudeNumeral = longitude => 
-	encodeBase19(getDecimal(Math.floor(longitude) + 180))
+/** @param {number} n */
+const getDecimal = n => n - Math.floor(n);
+
+/** @type {(str: string, size: number) => string[]} */
+const chunkSubstr = (str, size) => {
+  const numChunks = Math.ceil(str.length / size)
+  const chunks = new Array(numChunks)
+
+  for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+    chunks[i] = str.substring(o, o + size)
+  }
+
+  return chunks
+}
+/** @param {number} decimalPortion */
+const encodeDecimal = decimalPortion => {
+	let encoding = "";
+	const padZeroes = str => str.padEnd(3, '0');
+	for (let i = 0; i < decimalPortion.length; i += 3) {
+			const digitGroup = decimalPortion.slice(i, i + 3);
+			const encodedGroup = encodeBase32(padZeroes(digitGroup));
+			encoding += encodedGroup;
+	}
+	return encoding;
+};
+
+/** @param {number} latitude */
+const encodeLatitudeNumeral = latitude => 
+	encodeBase14(getDecimal(Math.floor(latitude) + 90))
 
 const encodeLatitude = latitude => { 
 	if (latitude > 90 || latitude < -90) {
 		throw 'out of bounds error'
 	}
 
+	return encodeLatitudeNumeral(latitude)
+		.concat(encodeDecimal(getDecimal(latitude)))
 }
+
+/** @param {number} longitude */
+const encodeLongitudeNumeral = longitude => 
+	encodeBase19(getDecimal(Math.floor(longitude) + 180))
+
 
 const encodeElevation = (elevation, elevationType) => { throw 'TODO' }
 
