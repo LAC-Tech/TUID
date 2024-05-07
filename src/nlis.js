@@ -1,3 +1,8 @@
+/**
+ * @typedef {"storey" | "ground"} ElevationType
+ *
+ * @type {(longitude: number, latitude: number, elevation: )}
+ */
 const Identifier = (longitude, latitude, elevation, elevationType) => {
 	throw 'TODO'
 }
@@ -8,10 +13,14 @@ const encodePoint = (longitude, latitude) => {
 
 const encodeLongitude = longitude => { throw 'TODO '}
 
+const encodeLongitudeNumeral = longitude => 
+	encodeBase19(getDecimal(Math.floor(longitude) + 180))
+
 const encodeLatitude = latitude => { 
 	if (latitude > 90 || latitude < -90) {
-		throw 'range error'
+		throw 'out of bounds error'
 	}
+
 }
 
 const encodeElevation = (elevation, elevationType) => { throw 'TODO' }
