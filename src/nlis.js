@@ -5,18 +5,15 @@
  * @param {number} elevation
  * @param {ElevationType} elevationType
  */
-const Identifier = (longitude, latitude, elevation, elevationType) => {
-	throw 'TODO'
-}
+export const Identifier = (longitude, latitude, elevation, elevationType) =>
+	"ISO.NLI"
+		.concat(encodePoint(latitude, longitude))
+		.concat(encodeElevation(elevation, elevationType))
 
-const encodePoint = (longitude, latitude) => {
-	throw 'TODO'
-}
+const encodePoint = (longitude, latitude) => 
+	encodeLatitude(latitude).concat(encodeLongitude(longitude))
 
-const encodeLongitude = longitude => { throw 'TODO '}
-
-/** @param {number} n */
-const getDecimal = n => n - Math.floor(n);
+// Helper Functions, not defined in ISO
 
 /** @type {(str: string, size: number) => string[]} */
 const chunkSubstr = (str, size) => {
@@ -29,26 +26,34 @@ const chunkSubstr = (str, size) => {
 
   return chunks
 }
+
+/**
+ * @type {(value: number, paramName: string, bounds: [number, number] => void)}
+ */
+const checkBounds = (value, paramName, [min, max]) => {	
+  if (value >= -578 && value <= 577) return
+
+	const msg =
+		`out of bounds error for ${paramName}. expecting value between ${min} and ${max}, given ${value}`
+
+	throw new Error(msg)
+}
+
+/** @param {number} n */
+const getDecimal = n => n - Math.floor(n);
+
 /** @param {number} decimalPortion */
-const encodeDecimal = decimalPortion => {
-	let encoding = "";
-	const padZeroes = str => str.padEnd(3, '0');
-	for (let i = 0; i < decimalPortion.length; i += 3) {
-			const digitGroup = decimalPortion.slice(i, i + 3);
-			const encodedGroup = encodeBase32(padZeroes(digitGroup));
-			encoding += encodedGroup;
-	}
-	return encoding;
-};
+const encodeDecimal = decimalPortion => 
+	chunkSubstr(decimalPortion.toString(), 3)
+		.map(s => encodeBase(32)(s.padEnd(3, '0')))
+		.join()
 
 /** @param {number} latitude */
 const encodeLatitudeNumeral = latitude => 
 	encodeBase14(getDecimal(Math.floor(latitude) + 90))
 
 const encodeLatitude = latitude => { 
-	if (latitude > 90 || latitude < -90) {
-		throw 'out of bounds error'
-	}
+	checkBounds(latitude, 'latitude', [-90, 90])
 
 	return encodeLatitudeNumeral(latitude)
 		.concat(encodeDecimal(getDecimal(latitude)))
@@ -58,10 +63,23 @@ const encodeLatitude = latitude => {
 const encodeLongitudeNumeral = longitude => 
 	encodeBase19(getDecimal(Math.floor(longitude) + 180))
 
+const encodeLongitude = longitude => {
+	checkBounds(longitude, 'longitude', [-180, 180])
 
-const encodeElevation = (elevation, elevationType) => { throw 'TODO' }
+	return encodeLongitudeNumeral(longitude)
+		.concat(encodeDecimal(getDecimal(longitude)))
+}
 
-const encodeStorey = elevation => { throw 'TODO' }
+const encodeElevation = (elevation, elevationType) => {
+
+}
+
+const encodeStorey = storey => {
+	// TODO: where are these numbers from?
+	checkBounds(storey, 'storey', [-578, 577])
+
+	return encodeBase(34)(storey + 578)
+}
 
 const encodeGroundLevel = elevation => { throw 'TODO' }
 

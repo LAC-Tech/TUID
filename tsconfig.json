@@ -2,6 +2,7 @@
 	"compilerOptions": {
 		"allowJs": true,
 		"checkJs": true,
+		"lib": "ES2017",
 		"noEmit": true,
 		"strict": false
 	},
