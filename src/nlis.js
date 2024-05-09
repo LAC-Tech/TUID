@@ -50,7 +50,7 @@ const encodeDecimal = decimalPortion =>
 
 /** @param {number} latitude */
 const encodeLatitudeNumeral = latitude => 
-	encodeBase14(getDecimal(Math.floor(latitude) + 90))
+	encodeBase(14)(getDecimal(Math.floor(latitude) + 90))
 
 const encodeLatitude = latitude => { 
 	checkBounds(latitude, 'latitude', [-90, 90])
@@ -61,7 +61,7 @@ const encodeLatitude = latitude => {
 
 /** @param {number} longitude */
 const encodeLongitudeNumeral = longitude => 
-	encodeBase19(getDecimal(Math.floor(longitude) + 180))
+	encodeBase(19)(getDecimal(Math.floor(longitude) + 180))
 
 const encodeLongitude = longitude => {
 	checkBounds(longitude, 'longitude', [-180, 180])
@@ -70,52 +70,40 @@ const encodeLongitude = longitude => {
 		.concat(encodeDecimal(getDecimal(longitude)))
 }
 
+/** @type {(elevation: number, elevationType: ElevationType) => string} */
 const encodeElevation = (elevation, elevationType) => {
-
+	if (elevationType === 'storey') {
+		return encodeStorey(elevation)
+	} else if (elevationType === 'ground') {
+		return encodeGroundLevel(elevation)
+	} else {
+		throw new Error('unknown elevation type')
+	}
 }
 
+/** @param {number} storey */
 const encodeStorey = storey => {
 	// TODO: where are these numbers from?
 	checkBounds(storey, 'storey', [-578, 577])
 	return encodeBase(34)(storey + 578)
 }
 
-const encodeGroundLevel = elevation => { throw 'TODO' }
-
-const normalizeEncoding = encoding => { throw 'TODO' }
-
-const encodingTableBase = {
-	'14': [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D'
-	],
-	'19': [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y'
-	],
-	'32': [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y', 
-		'J', 'K', 'L', 'M', 'N', 'Z', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'
-	],
-	'34': [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y', 
-		'J', 'K', 'L', 'M', 'N', 'Z', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'
-	],
+const encodeGroundLevel = groundLevel => {
+	checkBounds(groundLevel, 'groundLevel', [-19652, 19651])
+	return encodeBase(34)(groundLevel + 19652)
 }
 
+const encodingChars = [
+	'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
+	'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y', 
+	'J', 'K', 'L', 'M', 'N', 'Z', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'
+]
+
 const encodeBase = base => n => {
-    const encodingTable = encodingTableBase[base.toString()];
     let result = '';
     while (n > 0) {
-        result = encodingTable[n % base] + result;
+        result = encodingChars[n % base] + result;
         n = Math.floor(n / base);
     }
     return result || '0';
 }
-
-const encodeBase14 = encodeBase(14);
-const encodeBase19 = encodeBase(19);
-const encodeBase32 = encodeBase(32);
-const encodeBase34 = encodeBase(34);

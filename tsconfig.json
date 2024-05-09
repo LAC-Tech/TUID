@@ -4,6 +4,7 @@
 		"checkJs": true,
 		"lib": ["es2017"],
 		"noEmit": true,
+		"skipLibCheck": true,
 		"strict": false
 	},
 	"include": ["src/**/*"]
