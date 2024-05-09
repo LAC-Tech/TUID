@@ -77,7 +77,6 @@ const encodeElevation = (elevation, elevationType) => {
 const encodeStorey = storey => {
 	// TODO: where are these numbers from?
 	checkBounds(storey, 'storey', [-578, 577])
-
 	return encodeBase(34)(storey + 578)
 }
 
