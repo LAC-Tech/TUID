@@ -28,10 +28,10 @@ const chunkSubstr = (str, size) => {
 }
 
 /**
- * @type {(value: number, paramName: string, bounds: [number, number] => void)}
+ * @type {(value: number, paramName: string, bounds: [number, number]) => void}
  */
 const checkBounds = (value, paramName, [min, max]) => {	
-  if (value >= -578 && value <= 577) return
+  if (value >= -578 && value <= 577) return;
 
 	const msg =
 		`out of bounds error for ${paramName}. expecting value between ${min} and ${max}, given ${value}`
