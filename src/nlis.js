@@ -2,24 +2,24 @@
  * NOTES:
  * - Writing these in the order defined in ISO 8000-118
  * - ISO inconsistent wrt lat long OR long lat. Point object renders it moot.
+ *
+ * @typedef {"storey" | "ground"} ElevationType
+ * @typedef {{lat: number, long: number}} Point
  */
 
+import * as encode from "./encode.js"
+
 /**
- * @typedef {"storey" | "ground"} ElevationType
- * @typedef {{latitude: number, longitude: number}} Point
- *
  * @param {Point} point
  * @param {number} elevation
  * @param {ElevationType} elevationType
  */
 export const Identifier = (point, elevation, elevationType) =>
-	"ISO.NLI"
-		.concat(encodePoint(point))
-		.concat(encodeElevation(elevation, elevationType))
+	`ISO.NLI${encodePoint(point)}-${encodeElevation(elevation, elevationType)}`
 
 /** @param {Point} point */
-const encodePoint = ({latitude, longitude}) => 
-	encodeLatitude(latitude).concat(encodeLongitude(longitude))
+const encodePoint = ({lat, long}) => 
+	`${encodeLatitude(lat)}-${encodeLongitude(long)}`
 
 /** @param {number} latitude */
 const encodeLatitude = latitude => { 
@@ -31,7 +31,7 @@ const encodeLatitude = latitude => {
 
 /** @param {number} latitude */
 const encodeLatitudeNumeral = latitude => 
-	encodeBase(14)(getDecimal(Math.floor(latitude) + 90))
+	encode.base14(getDecimal(Math.floor(latitude) + 90))
 
 /** @param {number} longitude */
 const encodeLongitude = longitude => {
@@ -43,7 +43,7 @@ const encodeLongitude = longitude => {
 
 /** @param {number} longitude */
 const encodeLongitudeNumeral = longitude => 
-	encodeBase(19)(getDecimal(Math.floor(longitude) + 180))
+	encode.base19(getDecimal(Math.floor(longitude) + 180))
 
 /** @type {(elevation: number, elevationType: ElevationType) => string} */
 const encodeElevation = (elevation, elevationType) => {
@@ -60,19 +60,19 @@ const encodeElevation = (elevation, elevationType) => {
 const encodeStorey = storey => {
 	// TODO: where are these numbers from?
 	checkBounds(storey, 'storey', [-578, 577])
-	return encodeBase(34)(storey + 578)
+	return encode.storeyBase34(storey + 578)
 }
 
 /** @param {number} groundLevel */
 const encodeGroundLevel = groundLevel => {
 	checkBounds(groundLevel, 'groundLevel', [-19652, 19651])
-	return encodeBase(34)(groundLevel + 19652)
+	return encode.groundBase34(groundLevel + 19652)
 }
 
 /** @param {number} decimalPortion */
 const encodeDecimal = decimalPortion => 
 	chunkSubstr(decimalPortion.toString(), 3)
-		.map(s => encodeBase(32)(parseInt(s.padEnd(3, '0'))))
+		.map(s => encode.base32(parseInt(s.padEnd(3, '0'))))
 		.join('')
 
 // Helper Functions, not defined in ISO
@@ -104,35 +104,3 @@ const checkBounds = (value, paramName, [min, max]) => {
 /** @param {number} n */
 const getDecimal = n => n - Math.floor(n);
 
-// TODO: just do a slice of one array?
-const encodingTableBase = {
-	14: [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D'
-	],
-	19: [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y'
-	],
-	32: [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y', 
-		'J', 'K', 'L', 'M', 'N', 'Z', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'
-	],
-	34: [
-		'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 
-		'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'Y', 
-		'J', 'K', 'L', 'M', 'N', 'Z', 'P', 'Q', 'R', 'S', 'T', 'U', 'V'
-	],
-}
-
-/** @type {(base: 14 | 19 | 32 | 34) => (n: number) => string} */
-const encodeBase = base => n => {
-    const encodingTable = encodingTableBase[base];
-    let result = '';
-    while (n > 0) {
-        result = encodingTable[n % base] + result;
-        n = Math.floor(n / base);
-    }
-    return result || '0';
-}
