@@ -31,7 +31,7 @@ const encodeLatitude = latitude => {
 
 /** @param {number} latitude */
 const encodeLatitudeNumeral = latitude => 
-	encode.base14(getDecimal(Math.floor(latitude) + 90))
+	encode.base14(Math.floor(latitude) + 90)
 
 /** @param {number} longitude */
 const encodeLongitude = longitude => {
@@ -43,7 +43,7 @@ const encodeLongitude = longitude => {
 
 /** @param {number} longitude */
 const encodeLongitudeNumeral = longitude => 
-	encode.base19(getDecimal(Math.floor(longitude) + 180))
+	encode.base19(Math.floor(longitude) + 180)
 
 /** @type {(elevation: number, elevationType: ElevationType) => string} */
 const encodeElevation = (elevation, elevationType) => {
