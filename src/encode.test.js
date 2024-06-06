@@ -33,3 +33,7 @@ test("encode 31 as base32", () => {
 test("encode number part of latitude", () => {
 	expect(encode.base14(38 + 90)).toBe("92")
 })
+
+test("encode number part of longitude", () => {
+	expect(encode.base19(-77 + 180)).toBe("58")
+})
