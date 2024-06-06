@@ -69,11 +69,13 @@ const encodeGroundLevel = groundLevel => {
 	return encode.groundBase34(groundLevel + 19652)
 }
 
-/** @param {number} decimalPortion */
-const encodeDecimal = decimalPortion => 
-	chunkSubstr(decimalPortion.toString(), 3)
-		.map(s => encode.base32(parseInt(s.padEnd(3, '0'))))
-		.join('')
+/** @param {string} decimalPortion */
+const encodeDecimal = decimalPortion => {
+	const threeDigitChunks = chunkSubstr(decimalPortion.toString(), 3)
+		.map(s => s.padEnd(3, '0'))
+
+	return threeDigitChunks.map(s => encode.base32(parseInt(s))).join('')
+} 
 
 // Helper Functions, not defined in ISO
 
@@ -102,5 +104,5 @@ const checkBounds = (value, paramName, [min, max]) => {
 }
 
 /** @param {number} n */
-const getDecimal = n => n - Math.trunc(n);
+const getDecimal = n => n.toString().split('.')[1]
 
