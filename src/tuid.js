@@ -13,5 +13,5 @@ export const Identifier = (date, location, registeredPrefix, txnRef) => {
 	const {point, elevation} = location
 	const place = nlis.Identifier(point, elevation)
 
-	return `ISO.TUID:${time}${place}${registeredPrefix}:${registeredPrefix}`
+	return `ISO.TUID:${time}${place}${registeredPrefix}:${txnRef}`
 }
