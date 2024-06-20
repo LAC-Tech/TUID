@@ -6,6 +6,7 @@
   "scripts": {
     "test": "vitest"
   },
+	"type": "module",
   "author": "Lewis Andrew Campbell",
   "license": "MIT",
   "devDependencies": {

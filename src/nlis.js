@@ -1,21 +1,11 @@
-/**
- * NOTES:
- * - Writing these in the order defined in ISO 8000-118
- * - ISO inconsistent wrt lat long OR long lat. Point object renders it moot.
- *
- * @typedef {"storey" | "ground"} ElevationType
- * @typedef {{lat: number, long: number}} Point
- */
-
 import * as encode from "./encode.js"
 
 /**
  * @param {Point} point
- * @param {number} elevation
- * @param {ElevationType} elevationType
+ * @param {Elevation} elevation
  */
-export const Identifier = (point, elevation, elevationType) =>
-	`ISO.NLI${encodePoint(point)}-${encodeElevation(elevation, elevationType)}`
+export const Identifier = (point, elevation) =>
+	`ISO.NLI${encodePoint(point)}-${encodeElevation(elevation)}`
 
 /** @param {Point} point */
 const encodePoint = ({lat, long}) => 
@@ -45,12 +35,12 @@ const encodeLongitude = longitude => {
 const encodeLongitudeNumeral = longitude => 
 	encode.base19(Math.trunc(longitude) + 180)
 
-/** @type {(elevation: number, elevationType: ElevationType) => string} */
-const encodeElevation = (elevation, elevationType) => {
-	if (elevationType === 'storey') {
-		return encodeStorey(elevation)
-	} else if (elevationType === 'ground') {
-		return encodeGroundLevel(elevation)
+/** @param {Elevation} elevation */
+const encodeElevation = elevation => {
+	if ('storey' in elevation) {
+		return encodeStorey(elevation.storey)
+	} else if ('ground' in elevation) {
+		return encodeGroundLevel(elevation.ground)
 	} else {
 		throw new Error('unknown elevation type')
 	}
