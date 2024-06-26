@@ -5,7 +5,4 @@
 
 type Elevation = {storey: number} | {ground: number}
 type Point = {lat: number, long: number}
-type Location = {
- point: Point,
- elevation: Elevation 
-}
+type Location = Point & {elevation: Elevation}
