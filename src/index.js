@@ -1,4 +1,4 @@
-import * as nli from "./nlis.js";
+import * as nli from "./nli.js";
 
 /**
  * This is the reference implementation for the The Transport Unit Identifier,
