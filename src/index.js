@@ -1,12 +1,13 @@
 import * as nli from "./nli.js";
 
 // Following the JSON api in the standard library
+/**
+ * This is the reference implementation for the The Transport Unit Identifier,
+ * or TUID. TUIDs are an ISO standard ID that identifies loads in the
+ * logistics industry.
+ */
 export const TUID = {
-	/**
-	 * This is the reference implementation for the The Transport Unit Identifier,
-	 * or TUID. TUIDs are an ISO standard ID that identifies loads in the
-	 * logistics industry.
-	 *
+	/*
 	 * @param {Date} date - When the load is ready to be shipped
 	 * @param {Location} origin - Where the load is being sent from.
 	 * @param {Location} destination - Where the load is being sent to.
@@ -24,13 +25,15 @@ export const TUID = {
 	},
 };
 
+/**
+ * Natural location identifier.
+ *
+ * This can either be used as a standalone identifier.
+ *
+ * @param {Location} location
+ * @return {string}
+ */
 export const NLI = {
-	/**
-	 * Used as a stand alone NLI
-	 *
-	 * @param {Location} location
-	 * @return {string}
-	 */
 	encode: location => `ISO.NLI${NLI.encodeWithoutPrefix(location)}`,
 
 	/**
