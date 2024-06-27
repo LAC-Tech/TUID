@@ -1,13 +1,17 @@
-<a name="Identifier"></a>
+<a name="encodeTUID"></a>
 
-## Identifier ⇒ <code>string</code>
+## encodeTUID ⇒ <code>string</code>
+This is the reference implementation for the The Transport Unit Identifier,
+or TUID. TUIDs are an ISO standard ID that identifies loads in the
+logistics industry.
+
 **Kind**: global constant  
 
-| Param | Type |
-| --- | --- |
-| date | <code>Date</code> | 
-| origin | <code>Location</code> | 
-| destination | <code>Location</code> | 
-| registeredPrefix | <code>string</code> | 
-| txnRef | <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| date | <code>Date</code> |  |
+| origin | <code>Location</code> | Where the load is being sent from. |
+| destination | <code>Location</code> | Where the load is being sent to. |
+| registeredPrefix | <code>string</code> | Registered business numbber of the buyer or shipper. |
+| txnRef | <code>number</code> | Internal transaction reference number of the buyer or shipper. |
 
