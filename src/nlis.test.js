@@ -1,10 +1,10 @@
 import { expect, test } from "vitest";
-import { Identifier } from "./nlis";
+import { Encode } from "./nlis";
 
 // Testing against data from https://e-nli.org/
 
 test("Embassy of New Zealand in Washington DC", () => {
-	const actual = Identifier({
+	const actual = Encode({
 		lat: 38.918966,
 		long: -77.064241,
 		elevation: { storey: 0 },
@@ -13,7 +13,7 @@ test("Embassy of New Zealand in Washington DC", () => {
 });
 
 test("Ikamatua Hotel", () => {
-	const actual = Identifier({
+	const actual = Encode({
 		lat: -42.271374,
 		long: 171.684597,
 		elevation: { storey: 0 },

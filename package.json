@@ -6,11 +6,12 @@
   "scripts": {
     "test": "vitest"
   },
-	"type": "module",
+  "type": "module",
   "author": "Lewis Andrew Campbell",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.12.11",
+    "fast-check": "^3.19.0",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   }
