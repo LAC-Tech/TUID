@@ -1,5 +1,4 @@
-import * as nlis from "./nlis";
-export { Encode as encodeNLIS } from "./nlis";
+import * as nli from "./nlis.js";
 
 /**
  * This is the reference implementation for the The Transport Unit Identifier,
@@ -25,5 +24,20 @@ export const encodeTUID = (
 ) => {
 	const time = date.toISOString();
 
-	return `ISO.TUID:${time}${nlis.EncodeWithoutPrefix(origin)}${nlis.EncodeWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`;
+	return `ISO.TUID:${time}${encodeNLIWithoutPrefix(origin)}${encodeNLIWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`;
 };
+
+/**
+ * Used as a stand alone NLI
+ *
+ * @param {Location} location
+ */
+export const encodeNLI = location =>
+	`ISO.NLI${encodeNLIWithoutPrefix(location)}`;
+
+/**
+ * Used as a part of TUID or another identifier.
+ * @param {Location} location
+ */
+export const encodeNLIWithoutPrefix = location =>
+	`${nli.encodePoint(location)}-${nli.encodeElevation(location.elevation)}`;

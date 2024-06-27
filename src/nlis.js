@@ -1,22 +1,7 @@
 import * as encode from "./encode.js";
 
-/**
- * Used as a stand alone NLI
- *
- * @param {Location} location
- */
-export const Encode = location => `ISO.NLI${EncodeWithoutPrefix(location)}`;
-
-/**
- * Used as a part of TUID or another identifier.
- *
- * @param {Location} location
- */
-export const EncodeWithoutPrefix = location =>
-	`${encodePoint(location)}-${encodeElevation(location.elevation)}`;
-
 /** @param {Point} point */
-const encodePoint = ({ lat, long }) =>
+export const encodePoint = ({ lat, long }) =>
 	`${encodeLatitude(lat)}-${encodeLongitude(long)}`;
 
 /** @param {number} latitude */
@@ -46,7 +31,7 @@ const encodeLongitudeNumeral = longitude =>
 	encode.base19(Math.trunc(longitude) + 180);
 
 /** @param {Elevation} elevation */
-const encodeElevation = elevation => {
+export const encodeElevation = elevation => {
 	if ("storey" in elevation) {
 		return encodeStorey(elevation.storey);
 	} else if ("ground" in elevation) {
