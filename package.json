@@ -1,18 +1,20 @@
 {
-  "name": "tuid",
-  "version": "0.0.1",
-  "description": "Transport Unit Identifier",
-  "main": "index.js",
-  "scripts": {
-    "test": "vitest"
-  },
-  "type": "module",
-  "author": "Lewis Andrew Campbell",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/node": "^20.12.11",
-    "fast-check": "^3.19.0",
-    "typescript": "^5.4.5",
-    "vitest": "^1.6.0"
-  }
+	"name": "tuid",
+	"version": "0.0.1",
+	"description": "Transport Unit Identifier",
+	"main": "index.js",
+	"scripts": {
+		"docs": "jsdoc2md src/index.js > README.md",
+		"test": "vitest"
+	},
+	"type": "module",
+	"author": "Lewis Andrew Campbell",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.12.11",
+		"fast-check": "^3.19.0",
+		"jsdoc-to-markdown": "^8.0.1",
+		"typescript": "^5.4.5",
+		"vitest": "^1.6.0"
+	}
 }

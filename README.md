@@ -1,4 +1,13 @@
-# Tranposrt Unit IDentifier
+<a name="Identifier"></a>
 
-Reference implementation for the TUID, a unique identifier for loads in the
-logistics industry.
+## Identifier ⇒ <code>string</code>
+**Kind**: global constant  
+
+| Param | Type |
+| --- | --- |
+| date | <code>Date</code> | 
+| origin | <code>Location</code> | 
+| destination | <code>Location</code> | 
+| registeredPrefix | <code>string</code> | 
+| txnRef | <code>number</code> | 
+
