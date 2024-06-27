@@ -31,6 +31,7 @@ export const encodeTUID = (
  * Used as a stand alone NLI
  *
  * @param {Location} location
+ * @return {string}
  */
 export const encodeNLI = location =>
 	`ISO.NLI${encodeNLIWithoutPrefix(location)}`;
@@ -38,6 +39,7 @@ export const encodeNLI = location =>
 /**
  * Used as a part of TUID or another identifier.
  * @param {Location} location
+ * @return {string}
  */
 export const encodeNLIWithoutPrefix = location =>
 	`${nli.encodePoint(location)}-${nli.encodeElevation(location.elevation)}`;

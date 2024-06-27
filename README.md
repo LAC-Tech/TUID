@@ -6,10 +6,10 @@
 or TUID. TUIDs are an ISO standard ID that identifies loads in the
 logistics industry.</p>
 </dd>
-<dt><a href="#encodeNLI">encodeNLI</a></dt>
+<dt><a href="#encodeNLI">encodeNLI</a> ⇒ <code>string</code></dt>
 <dd><p>Used as a stand alone NLI</p>
 </dd>
-<dt><a href="#encodeNLIWithoutPrefix">encodeNLIWithoutPrefix</a></dt>
+<dt><a href="#encodeNLIWithoutPrefix">encodeNLIWithoutPrefix</a> ⇒ <code>string</code></dt>
 <dd><p>Used as a part of TUID or another identifier.</p>
 </dd>
 </dl>
@@ -33,7 +33,7 @@ logistics industry.
 
 <a name="encodeNLI"></a>
 
-## encodeNLI
+## encodeNLI ⇒ <code>string</code>
 Used as a stand alone NLI
 
 **Kind**: global constant  
@@ -44,7 +44,7 @@ Used as a stand alone NLI
 
 <a name="encodeNLIWithoutPrefix"></a>
 
-## encodeNLIWithoutPrefix
+## encodeNLIWithoutPrefix ⇒ <code>string</code>
 Used as a part of TUID or another identifier.
 
 **Kind**: global constant  
