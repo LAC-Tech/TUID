@@ -8,9 +8,15 @@ export const encodePoint = ({ lat, long }) =>
 const encodeLatitude = latitude => {
 	checkBounds(latitude, "latitude", [-90, 90]);
 
-	return encodeLatitudeNumeral(latitude).concat(
+	const result = encodeLatitudeNumeral(latitude).concat(
 		encodeDecimal(getDecimal(latitude))
 	);
+
+	if (result.length != 6) {
+		throw new Error("encoded latitude should be 6 digits");
+	}
+
+	return result;
 };
 
 /** @param {number} latitude */
@@ -21,9 +27,15 @@ const encodeLatitudeNumeral = latitude =>
 const encodeLongitude = longitude => {
 	checkBounds(longitude, "longitude", [-180, 180]);
 
-	return encodeLongitudeNumeral(longitude).concat(
+	const result = encodeLongitudeNumeral(longitude).concat(
 		encodeDecimal(getDecimal(longitude))
 	);
+
+	if (result.length != 6) {
+		throw new Error("encoded longitude should be 6 digits");
+	}
+
+	return result;
 };
 
 /** @param {number} longitude */
