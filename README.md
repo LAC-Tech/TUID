@@ -9,9 +9,9 @@ logistics industry.
 
 | Param | Type | Description |
 | --- | --- | --- |
-| date | <code>Date</code> |  |
+| date | <code>Date</code> | When the load is ready to be shipped |
 | origin | <code>Location</code> | Where the load is being sent from. |
 | destination | <code>Location</code> | Where the load is being sent to. |
-| registeredPrefix | <code>string</code> | Registered business numbber of the buyer or shipper. |
+| registeredPrefix | <code>string</code> | Registered business number of the buyer or shipper. |
 | txnRef | <code>number</code> | Internal transaction reference number of the buyer or shipper. |
 

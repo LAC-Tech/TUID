@@ -6,7 +6,7 @@ export { Encode as encodeNLIS } from "./nlis";
  * or TUID. TUIDs are an ISO standard ID that identifies loads in the
  * logistics industry.
  *
- * @param {Date} date
+ * @param {Date} date - When the load is ready to be shipped
  * @param {Location} origin - Where the load is being sent from.
  * @param {Location} destination - Where the load is being sent to.
  * @param {string} registeredPrefix - Registered business number of the buyer
