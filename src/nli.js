@@ -1,5 +1,4 @@
-import * as encode from "./encode.js";
-
+  import { encode } from "./num";
 /** @param {Point} point */
 export const encodePoint = ({ lat, long }) =>
 	`${encodeLatitude(lat)}-${encodeLongitude(long)}`;
