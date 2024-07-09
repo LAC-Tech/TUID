@@ -1,6 +1,6 @@
-import { encode } from "./num"
+import * as num from "./num"
 /** @param {Point} point */
-export const encodePoint = ({ lat, long }) =>
+const encodePoint = ({ lat, long }) =>
 	`${encodeLatitude(lat)}-${encodeLongitude(long)}`
 
 /** @param {number} latitude */
@@ -18,7 +18,7 @@ const encodeLatitude = latitude => {
 
 /** @param {number} latitude */
 const encodeLatitudeNumeral = latitude =>
-	encode.base14(Math.trunc(latitude) + 90)
+	num.encode.base14(Math.trunc(latitude) + 90)
 
 /** @param {number} longitude */
 const encodeLongitude = longitude => {
@@ -35,10 +35,10 @@ const encodeLongitude = longitude => {
 
 /** @param {number} longitude */
 const encodeLongitudeNumeral = longitude =>
-	encode.base19(Math.trunc(longitude) + 180)
+	num.encode.base19(Math.trunc(longitude) + 180)
 
 /** @param {Elevation} elevation */
-export const encodeElevation = elevation => {
+const encodeElevation = elevation => {
 	if ("storey" in elevation) {
 		return encodeStorey(elevation.storey)
 	} else if ("ground" in elevation) {
@@ -51,7 +51,7 @@ export const encodeElevation = elevation => {
 /** @param {number} n */
 const encodeStoreyBase34 = n => {
 	checkBounds(n, "n", [0, 1156])
-	const result = encode.base34(n)
+	const result = num.encode.base34(n)
 	checkLen(result, "storey", 2)
 	return result
 }
@@ -66,7 +66,7 @@ const encodeStorey = storey => {
 /** @param {number} n */
 const encodeGroundBase34 = n => {
 	checkBounds(n, "n", [0, 39304])
-	const result = encode.base34(n)
+	const result = num.encode.base34(n)
 	checkLen(result, "ground", 3)
 	return result
 }
@@ -83,7 +83,7 @@ const encodeDecimal = decimalPortion => {
 		s.padEnd(3, "0")
 	)
 
-	return threeDigitChunks.map(s => encode.base32(parseInt(s))).join("")
+	return threeDigitChunks.map(s => num.encode.base32(parseInt(s))).join("")
 }
 
 // Helper Functions, not defined in ISO
@@ -119,3 +119,8 @@ const checkBounds = (value, paramName, [min, max]) => {
 
 /** @param {number} n */
 const getDecimal = n => n.toString().split(".")[1] ?? "000"
+
+export const encode = {
+	point: encodePoint,
+	elevation: encodeElevation,
+}

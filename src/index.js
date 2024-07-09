@@ -1,4 +1,4 @@
-import * as nli from "./nli.js";
+import * as nli from "./nli.js"
 
 // Following the JSON api in the standard library
 /**
@@ -19,11 +19,11 @@ export const TUID = {
 	 * @return {string}
 	 */
 	encode: (date, origin, destination, registeredPrefix, txnRef) => {
-		const time = date.toISOString();
+		const time = date.toISOString()
 
-		return `ISO.TUID:${time}${NLI.encodeWithoutPrefix(origin)}${NLI.encodeWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`;
+		return `ISO.TUID:${time}${NLI.encodeWithoutPrefix(origin)}${NLI.encodeWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`
 	},
-};
+}
 
 /**
  * Natural location identifier.
@@ -43,5 +43,5 @@ export const NLI = {
 	 * @return {string}
 	 */
 	encodeWithoutPrefix: location =>
-		`${nli.encodePoint(location)}-${nli.encodeElevation(location.elevation)}`,
-};
+		`${nli.encode.point(location)}-${nli.encode.elevation(location.elevation)}`,
+}
