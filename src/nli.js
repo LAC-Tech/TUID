@@ -3,6 +3,11 @@ import * as num from "./num"
 const encodePoint = ({ lat, long }) =>
 	`${encodeLatitude(lat)}-${encodeLongitude(long)}`
 
+/** @type {(s: String) => Point} */
+const decodePoint = s => {
+	throw "TODO"
+}
+
 /** @param {number} latitude */
 const encodeLatitude = latitude => {
 	checkBounds(latitude, "latitude", [-90, 90])
@@ -14,6 +19,11 @@ const encodeLatitude = latitude => {
 	checkLen(result, "latitude", 6)
 
 	return result
+}
+
+/** @type {(s: string) => number} */
+const decodeLatitude = s => {
+	throw "TODO"
 }
 
 /** @param {number} latitude */
@@ -48,6 +58,11 @@ const encodeElevation = elevation => {
 	}
 }
 
+/** @type {(s: string) => Point} */
+const decodeElevation = s => {
+	throw "TODO"
+}
+
 /** @param {number} n */
 const encodeStoreyBase34 = n => {
 	checkBounds(n, "n", [0, 1156])
@@ -61,6 +76,11 @@ const encodeStorey = storey => {
 	// TODO: where are these numbers from?
 	checkBounds(storey, "storey", [-578, 577])
 	return encodeStoreyBase34(storey + 578)
+}
+
+/** @type {(s: string) => number} */
+const decodeStorey = s => {
+	throw "TODO"
 }
 
 /** @param {number} n */
@@ -123,4 +143,9 @@ const getDecimal = n => n.toString().split(".")[1] ?? "000"
 export const encode = {
 	point: encodePoint,
 	elevation: encodeElevation,
+}
+
+export const decode = {
+	point: decodePoint,
+	elevation: decodeElevation,
 }
