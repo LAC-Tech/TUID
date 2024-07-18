@@ -1,4 +1,5 @@
-import * as nli from "./nli.js"
+import { NLI } from "./nli.js"
+export { NLI } from "./nli.js"
 
 // Following the JSON api in the standard library
 /**
@@ -23,25 +24,4 @@ export const TUID = {
 
 		return `ISO.TUID:${time}${NLI.encodeWithoutPrefix(origin)}${NLI.encodeWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`
 	},
-}
-
-/**
- * Natural location identifier.
- */
-export const NLI = {
-	/**
-	 * Produces a stand alone NLI (with prefix)
-	 *
-	 * @param {Location} location
-	 * @return {string}
-	 */
-	encode: location => `ISO.NLI${NLI.encodeWithoutPrefix(location)}`,
-
-	/**
-	 * Used as a part of TUID or another identifier.
-	 * @param {Location} location
-	 * @return {string}
-	 */
-	encodeWithoutPrefix: location =>
-		`${nli.Point.encode(location)}-${nli.Elevation.encode(location.elevation)}`,
 }
