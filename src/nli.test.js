@@ -1,4 +1,7 @@
-import { expect, test } from "vitest"
+import fc from "fast-check"
+
+import { describe, expect, test } from "vitest"
+import { Point } from "./nli"
 import { NLI } from "./index"
 
 // Testing against data from https://e-nli.org/
@@ -19,4 +22,22 @@ test("Ikamatua Hotel", () => {
 		elevation: { storey: 0 },
 	})
 	expect(actual).toBe("ISO.NLI368FBM-Y9LCYL-H0")
+})
+
+describe("encoding/decoding is reversible", () => {
+	test("Point", () =>
+		fc.assert(
+			fc.property(
+				fc.float({ min: -90, max: 90 }),
+				fc.float({ min: -180, max: 180 }),
+				/**
+				 * @param {number} lat
+				 * @param {number} long
+				 */
+				(lat, long) => {
+					const p = { lat, long }
+					expect(p).toBe(Point.decode(Point.encode(p)))
+				}
+			)
+		))
 })

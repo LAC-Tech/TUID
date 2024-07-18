@@ -53,7 +53,7 @@ const assertNoInfoLoss = (encodeFn, decodeFn) => {
 	)
 }
 
-describe("can encode and decode a number, and get the same number out", () => {
+describe("encoding/decoding is reversible", () => {
 	test("base14", () => assertNoInfoLoss(encode.base14, decode.base14))
 	test("base19", () => assertNoInfoLoss(encode.base19, decode.base19))
 	test("base32", () => assertNoInfoLoss(encode.base32, decode.base32))
