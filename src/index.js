@@ -43,5 +43,5 @@ export const NLI = {
 	 * @return {string}
 	 */
 	encodeWithoutPrefix: location =>
-		`${nli.encode.point(location)}-${nli.encode.elevation(location.elevation)}`,
+		`${nli.Point.encode(location)}-${nli.Elevation.encode(location.elevation)}`,
 }
