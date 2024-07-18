@@ -6,7 +6,9 @@ export const Latitude = {
 	/** @param {number} lat */
 	encode: lat => {
 		checkBounds(lat, "latitude", [-90, 90])
-		const result = LatitudeNumeral.encode(lat).concat(Decimal.encode(lat))
+		const result = LatitudeNumeral.encode(lat)
+			.concat(Decimal.encode(lat))
+			.padStart(2, "0")
 		console.log({ result })
 		return result
 	},
