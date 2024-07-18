@@ -36,7 +36,7 @@ describe("encoding/decoding is reversible", () => {
 				 */
 				(lat, long) => {
 					const p = { lat, long }
-					expect(p).toBe(Point.decode(Point.encode(p)))
+					expect(p).toStrictEqual(Point.decode(Point.encode(p)))
 				}
 			)
 		))

@@ -19,20 +19,17 @@ const Latitude = {
 	encode: lat => {
 		checkBounds(lat, "latitude", [-90, 90])
 		const result = LatitudeNumeral.encode(lat).concat(Decimal.encode(lat))
-		checkLen(result, "latitude", 6)
+		console.log({ result })
 		return result
 	},
-
 	/** @param {string} s */
 	decode: s => {
-		checkLen(s, "longitude", 6)
-		const numeralPart = s.slice(0, 2)
-		const decimalPart = s.slice(2)
-		const longNumeral = LongitudeNumeral.decode(numeralPart)
-		const longDecimal = Decimal.decode(decimalPart)
-		const long = longNumeral + longDecimal
-		checkBounds(long, "longitude", [-180, 180])
-		return long
+		const [numeralPart, decimalPart] = s.split(".")
+		const latNumeral = LatitudeNumeral.decode(numeralPart)
+		const latDecimal = Decimal.decode(decimalPart ?? "000")
+		const lat = latNumeral + latDecimal
+		checkBounds(lat, "latitude", [-90, 90])
+		return lat
 	},
 }
 
@@ -41,19 +38,16 @@ const Longitude = {
 	encode: long => {
 		checkBounds(long, "longitude", [-180, 180])
 		const result = LongitudeNumeral.encode(long).concat(Decimal.encode(long))
-		checkLen(result, "longitude", 6)
 		return result
 	},
-	/** @type {(s: string) => number} */
+	/** @param {string} s */
 	decode: s => {
-		checkLen(s, "latitude", 6)
-		const numeralPart = s.slice(0, 2)
-		const decimalPart = s.slice(2)
-		const latNumeral = LatitudeNumeral.decode(numeralPart)
-		const latDecimal = Decimal.decode(decimalPart)
-		const lat = latNumeral + latDecimal
-		checkBounds(lat, "latitude", [-90, 90])
-		return lat
+		const [numeralPart, decimalPart] = s.split(".")
+		const longNumeral = LongitudeNumeral.decode(numeralPart)
+		const longDecimal = Decimal.decode(decimalPart ?? "000")
+		const long = longNumeral + longDecimal
+		checkBounds(long, "longitude", [-180, 180])
+		return long
 	},
 }
 
@@ -164,7 +158,7 @@ const GroundBase34 = {
 const Decimal = {
 	/** @param {number} n */
 	encode: n => {
-		const decimalPortion = n.toString().split(".")[1] ?? "000"
+		const decimalPortion = n.toString().split(".")[1] ?? ""
 
 		const threeDigitChunks = chunkSubstr(decimalPortion.toString(), 3).map(s =>
 			s.padEnd(3, "0")
@@ -199,7 +193,9 @@ const chunkSubstr = (str, size) => {
 /** @type {(value: string, name: string, expectedLen: number) => void} */
 const checkLen = (value, name, expectedLen) => {
 	if (value.length != expectedLen) {
-		throw new Error(`encoded ${name} should be ${expectedLen} digits`)
+		throw new Error(
+			`${name} should have length ${expectedLen} digits, but given length ${value.length}`
+		)
 	}
 }
 /**
