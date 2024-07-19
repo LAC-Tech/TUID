@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vitest"
-import { encode, decode } from "./num"
+import { encode, decode } from "./num.js"
 import fc from "fast-check"
 
 test("encode 0 as base14", () => {

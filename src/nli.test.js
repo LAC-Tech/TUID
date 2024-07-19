@@ -1,8 +1,8 @@
 import fc from "fast-check"
 
 import { describe, expect, test } from "vitest"
-import { Point } from "./nli"
-import { NLI } from "./index"
+import { Point } from "./nli.js"
+import { NLI } from "./index.js"
 
 // Testing against data from https://e-nli.org/
 
@@ -35,8 +35,8 @@ describe("encoding/decoding is reversible", () => {
 				 * @param {number} long
 				 */
 				(lat, long) => {
-					const actual = { lat, long }
-					const expected = Point.decode(Point.encode(actual))
+					const actual = new Point({ lat, long })
+					const expected = Point.decode(actual.encode())
 					expect(actual).toStrictEqual(expected)
 				}
 			)

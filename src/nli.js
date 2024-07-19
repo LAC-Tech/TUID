@@ -1,4 +1,4 @@
-import { Latitude, Longitude, Storey, GroundLevel } from "./geography"
+import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 
 /**
  * Natural location identifier.
@@ -18,23 +18,49 @@ export const NLI = {
 	 * @return {string}
 	 */
 	encodeWithoutPrefix: location =>
-		`${Point.encode(location)}-${Elevation.encode(location.elevation)}`,
+		`${new Point(location).encode()}-${Elevation.encode(location.elevation)}`,
 }
 
-export const Point = {
-	/** @param {Point} point */
-	encode: ({ lat, long }) =>
-		`${Latitude.encode(lat)}-${Longitude.encode(long)}`,
+/**
+ * According to the ISO standard:
+ * - we need 6 decimal points
+ * - we're not encoding the sign in the string
+ *
+ * Therefore some processing must be applied to user supplied IEE754 numbers
+ * @param {number} n
+ */
+const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
+const normalization_factor = 1_000_000
+
+export class Point {
+	#lat
+	#long
+	/** @param {{lat: number, long: number}} args */
+	constructor({ lat, long }) {
+		this.#lat = normalize(lat)
+		this.#long = normalize(long)
+	}
+
+	get lat() {
+		return this.#lat / normalization_factor
+	}
+
+	get long() {
+		return this.#long / normalization_factor
+	}
+
+	encode() {
+		return `${Latitude.encode(this.#lat)}-${Longitude.encode(this.#long)}`
+	}
 
 	/** @param {string} s */
-	decode: s => {
+	static decode(s) {
 		const [latPart, longPart] = s.split("-")
 		const lat = Latitude.decode(latPart)
 		const long = Longitude.decode(longPart)
-		return { lat, long }
-	},
+		return new Point({ lat, long })
+	}
 }
-
 export const Elevation = {
 	/** @param {Elevation} elevation */
 	encode: elevation => {
