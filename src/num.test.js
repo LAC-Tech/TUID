@@ -1,61 +1,40 @@
 import { expect, test, describe } from "vitest"
-import { encode, decode } from "./num.js"
+import { Base14, Base19, Base32, Base34 } from "./num.js"
 import fc from "fast-check"
 
-test("encode 0 as base14", () => {
-	expect(encode.base14(0)).toBe("0")
-})
-
-test("encode 13 as base14", () => {
-	expect(encode.base14(13)).toBe("D")
-})
-
-test("encode 13 as base14", () => {
-	expect(encode.base14(14)).toBe("10")
-})
-
-test("encode 0 as base19", () => {
-	expect(encode.base19(0)).toBe("0")
-})
-
-test("encode 18 as base14", () => {
-	expect(encode.base19(18)).toBe("Y")
-})
-
-test("encode 0 as base32", () => {
-	expect(encode.base32(0)).toBe("0")
-})
-
-test("encode 31 as base32", () => {
-	expect(encode.base32(31)).toBe("V")
-})
+test("encode 0 as base14", () => expect(Base14.encode(0)).toBe("0"))
+test("encode 13 as base14", () => expect(Base14.encode(13)).toBe("D"))
+test("encode 13 as base14", () => expect(Base14.encode(14)).toBe("10"))
+test("encode 0 as base19", () => expect(Base19.encode(0)).toBe("0"))
+test("encode 18 as base14", () => expect(Base19.encode(18)).toBe("Y"))
+test("encode 0 as base32", () => expect(Base32.encode(0)).toBe("0"))
+test("encode 31 as base32", () => expect(Base32.encode(31)).toBe("V"))
 
 test("encode number part of latitude", () => {
-	expect(encode.base14(38 + 90)).toBe("92")
+	expect(Base14.encode(38 + 90)).toBe("92")
 })
 
 test("encode number part of longitude", () => {
-	expect(encode.base19(-77 + 180)).toBe("58")
+	expect(Base19.encode(-77 + 180)).toBe("58")
 })
 
 /**
- * @param {(n: number) => string} encodeFn
- * @param {(s: string) => number} decodeFn
+ * @param {{encode: (n: number) => string, decode: (s: string) => number}} base
  */
-const assertNoInfoLoss = (encodeFn, decodeFn) => {
+const assertNoInfoLoss = ({ encode, decode }) => {
 	fc.assert(
 		fc.property(
 			fc.nat(),
 			/** @type {number} */ n => {
-				expect(n).toBe(decodeFn(encodeFn(n)))
+				expect(n).toBe(decode(encode(n)))
 			}
 		)
 	)
 }
 
 describe("encoding/decoding is reversible", () => {
-	test("base14", () => assertNoInfoLoss(encode.base14, decode.base14))
-	test("base19", () => assertNoInfoLoss(encode.base19, decode.base19))
-	test("base32", () => assertNoInfoLoss(encode.base32, decode.base32))
-	test("base34", () => assertNoInfoLoss(encode.base34, decode.base34))
+	test("base14", () => assertNoInfoLoss(Base14))
+	test("base19", () => assertNoInfoLoss(Base19))
+	test("base32", () => assertNoInfoLoss(Base32))
+	test("base34", () => assertNoInfoLoss(Base34))
 })

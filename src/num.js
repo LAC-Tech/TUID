@@ -52,13 +52,6 @@ const encodeBase = radix => n => {
 	return result
 }
 
-export const encode = {
-	base14: encodeBase(14),
-	base19: encodeBase(19),
-	base32: encodeBase(32),
-	base34: encodeBase(34),
-}
-
 /** @type {(radix: number) => (str: string) => number} */
 const decodeBase = radix => str => {
 	const alphabet = encodingAlphabet.slice(0, radix)
@@ -72,9 +65,22 @@ const decodeBase = radix => str => {
 	return number
 }
 
-export const decode = {
-	base14: decodeBase(14),
-	base19: decodeBase(19),
-	base32: decodeBase(32),
-	base34: decodeBase(34),
+export const Base14 = {
+	encode: encodeBase(14),
+	decode: decodeBase(14),
+}
+
+export const Base19 = {
+	encode: encodeBase(19),
+	decode: decodeBase(19),
+}
+
+export const Base32 = {
+	encode: encodeBase(32),
+	decode: decodeBase(32),
+}
+
+export const Base34 = {
+	encode: encodeBase(34),
+	decode: decodeBase(34),
 }

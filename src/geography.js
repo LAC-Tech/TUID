@@ -1,6 +1,6 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
-import * as num from "./num.js"
+import { Base14, Base19, Base32, Base34 } from "./num.js"
 
 export const Latitude = {
 	/** @param {number} lat */
@@ -54,21 +54,20 @@ export const Longitude = {
 
 const LongitudeNumeral = {
 	/** @param {number} longitude */
-	encode: longitude =>
-		num.encode.base19(getBeforeLastSixDigits(longitude) + 180),
+	encode: longitude => Base19.encode(getBeforeLastSixDigits(longitude) + 180),
 	/** @type {(s: string) => number} */
 	decode: s => {
-		const decodedValue = num.decode.base19(s)
+		const decodedValue = Base19.decode(s)
 		return decodedValue - 180
 	},
 }
 
 const LatitudeNumeral = {
 	/** @param {number} latitude */
-	encode: latitude => num.encode.base14(getBeforeLastSixDigits(latitude) + 90),
+	encode: latitude => Base14.encode(getBeforeLastSixDigits(latitude) + 90),
 	/** @type {(s: string) => number} */
 	decode: s => {
-		const decodedValue = num.decode.base14(s)
+		const decodedValue = Base14.decode(s)
 		return decodedValue - 90
 	},
 }
@@ -108,14 +107,14 @@ const StoreyBase34 = {
 	/** @param {number} n */
 	encode: n => {
 		checkBounds(n, "n", [0, 1156])
-		const result = num.encode.base34(n)
+		const result = Base34.encode(n)
 		checkLen(result, "storey", 2)
 		return result
 	},
 	/** @type {(s: string) => number} */
 	decode: s => {
 		checkLen(s, "storey", 2)
-		const result = num.decode.base34(s)
+		const result = Base34.decode(s)
 		checkBounds(result, "result", [0, 1156])
 		return result
 	},
@@ -125,7 +124,7 @@ const GroundBase34 = {
 	/** @param {number} n */
 	encode: n => {
 		checkBounds(n, "n", [0, 39304])
-		const result = num.encode.base34(n)
+		const result = Base34.encode(n)
 		checkLen(result, "ground", 3)
 		return result
 	},
@@ -133,11 +132,12 @@ const GroundBase34 = {
 	/** @type {(s: string) => number} */
 	decode: s => {
 		checkLen(s, "ground", 3)
-		const result = num.decode.base34(s)
+		const result = Base34.decode(s)
 		checkBounds(result, "result", [0, 39304])
 		return result
 	},
 }
+
 const Decimal = {
 	/** @param {number} n */
 	encode: n => {
@@ -148,13 +148,13 @@ const Decimal = {
 			s.padEnd(3, "0")
 		)
 
-		return threeDigitChunks.map(s => num.encode.base32(parseInt(s))).join("")
+		return threeDigitChunks.map(s => Base32.encode(parseInt(s))).join("")
 	},
 	/** @type {(s: string) => number} */
 	decode: s => {
 		const threeDigitChunks = chunkSubstr(s, 1)
 		const decimalDigits = threeDigitChunks
-			.map(ch => num.decode.base32(ch).toString().padStart(3, "0"))
+			.map(ch => Base32.decode(ch).toString().padStart(3, "0"))
 			.join("")
 		return parseFloat(`0.${decimalDigits}`)
 	},
