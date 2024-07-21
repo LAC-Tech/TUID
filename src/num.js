@@ -1,3 +1,37 @@
+export const Decimal = {
+	/** @param {number} n */
+	encode: n => {
+		const lastSixDigits = n.toString().slice(-6)
+		const decimalPortion = lastSixDigits === "0" ? "" : lastSixDigits
+
+		const threeDigitChunks = chunkSubstr(decimalPortion.toString(), 3).map(s =>
+			s.padEnd(3, "0")
+		)
+
+		return threeDigitChunks.map(s => Base32.encode(parseInt(s))).join("")
+	},
+	/** @type {(s: string) => number} */
+	decode: s => {
+		const threeDigitChunks = chunkSubstr(s, 1)
+		const decimalDigits = threeDigitChunks
+			.map(ch => Base32.decode(ch).toString().padStart(3, "0"))
+			.join("")
+		return parseFloat(`0.${decimalDigits}`)
+	},
+}
+
+/** @type {(str: string, size: number) => string[]} */
+const chunkSubstr = (str, size) => {
+	const numChunks = Math.ceil(str.length / size)
+	const chunks = new Array(numChunks)
+
+	for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+		chunks[i] = str.substring(o, o + size)
+	}
+
+	return chunks
+}
+
 const encodingAlphabet = [
 	"0",
 	"1",

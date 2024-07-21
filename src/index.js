@@ -10,8 +10,8 @@ export { NLI } from "./nli.js"
 export const TUID = {
 	/**
 	 * @param {Date} date - When the load is ready to be shipped
-	 * @param {Location} origin - Where the load is being sent from.
-	 * @param {Location} destination - Where the load is being sent to.
+	 * @param {NLI} origin - Where the load is being sent from.
+	 * @param {NLI} destination - Where the load is being sent to.
 	 * @param {string} registeredPrefix - Registered business number of the buyer
 	 * or shipper.
 	 * @param {number} txnRef - Internal transaction reference number of the buyer
@@ -22,6 +22,6 @@ export const TUID = {
 	encode: (date, origin, destination, registeredPrefix, txnRef) => {
 		const time = date.toISOString()
 
-		return `ISO.TUID:${time}${NLI.encodeWithoutPrefix(origin)}${NLI.encodeWithoutPrefix(destination)}${registeredPrefix}:${txnRef}`
+		return `ISO.TUID:${time}${origin.encodeWithoutPrefix()}${destination.encodeWithoutPrefix()}${registeredPrefix}:${txnRef}`
 	},
 }

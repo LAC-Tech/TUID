@@ -1,56 +1,56 @@
 import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
-
 /**
+ * @typedef {import('./types.d.ts').Elevation} Elevation
  * Natural location identifier.
  */
-export const NLI = {
+export class NLI {
+	// At this point we are no longer hiding any information, so these are public
+	point
+	elevation
+
+	/** @param {{lat: number, long: number, elevation: Elevation}} args */
+	constructor({ lat, long, elevation }) {
+		this.point = new Point({ lat, long })
+		this.elevation = elevation
+	}
+
 	/**
 	 * Produces a stand alone NLI (with prefix)
-	 *
-	 * @param {Location} location
 	 * @return {string}
 	 */
-	encode: location => `ISO.NLI${NLI.encodeWithoutPrefix(location)}`,
+	encode() {
+		return `ISO.NLI${this.encodeWithoutPrefix()}`
+	}
 
 	/**
 	 * Used as a part of TUID or another identifier.
-	 * @param {Location} location
 	 * @return {string}
 	 */
-	encodeWithoutPrefix: location =>
-		`${new Point(location).encode()}-${Elevation.encode(location.elevation)}`,
+	encodeWithoutPrefix() {
+		return `${this.point.encode()}-${Elevation.encode(this.elevation)}`
+	}
 }
-
-/**
- * According to the ISO standard:
- * - we need 6 decimal points
- * - we're not encoding the sign in the string
- *
- * Therefore some processing must be applied to user supplied IEE754 numbers
- * @param {number} n
- */
-const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
-const normalization_factor = 1_000_000
 
 export class Point {
 	#lat
 	#long
-	/** @param {{lat: number, long: number}} args */
+
+	/** @param {{lat: number, long: number}} p */
 	constructor({ lat, long }) {
-		this.#lat = normalize(lat)
-		this.#long = normalize(long)
+		this.#lat = new Latitude(lat)
+		this.#long = new Longitude(long)
 	}
 
 	get lat() {
-		return this.#lat / normalization_factor
+		return this.#lat.n
 	}
 
 	get long() {
-		return this.#long / normalization_factor
+		return this.#long.n
 	}
 
 	encode() {
-		return `${Latitude.encode(this.#lat)}-${Longitude.encode(this.#long)}`
+		return `${this.#lat.encode()}-${this.#long.encode()}`
 	}
 
 	/** @param {string} s */
@@ -58,9 +58,14 @@ export class Point {
 		const [latPart, longPart] = s.split("-")
 		const lat = Latitude.decode(latPart)
 		const long = Longitude.decode(longPart)
-		return new Point({ lat, long })
+
+		const point = Object.create(Point.prototype)
+		point.#lat = lat
+		point.#long = long
+		return point
 	}
 }
+
 export const Elevation = {
 	/** @param {Elevation} elevation */
 	encode: elevation => {

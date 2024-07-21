@@ -1,25 +1,45 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
-import { Base14, Base19, Base32, Base34 } from "./num.js"
+import { Base14, Base19, Base34, Decimal } from "./num.js"
 
-export const Latitude = {
-	/** @param {number} lat */
-	encode: lat => {
-		checkBounds(lat, "latitude", [-90_000_000, 90_000_000])
-		const result = LatitudeNumeral.encode(lat)
-			.concat(Decimal.encode(lat))
+/**
+ * According to the ISO standard:
+ * - we need 6 decimal points
+ * - we're not encoding the sign in the string
+ *
+ * Therefore some processing must be applied to user supplied IEE754 numbers
+ * @param {number} n
+ */
+const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
+const normalization_factor = 1_000_000
+
+export class Latitude {
+	#n
+	/** @param {number} n */
+	constructor(n) {
+		checkBounds(n, "latitude", [-90, 90])
+		this.#n = normalize(n)
+	}
+
+	get n() {
+		return this.#n / normalization_factor
+	}
+
+	encode() {
+		const result = LatitudeNumeral.encode(this.#n)
+			.concat(Decimal.encode(this.#n))
 			.padStart(2, "0")
 		return result
-	},
+	}
 	/** @param {string} s */
-	decode: s => {
+	static decode(s) {
 		const [numeralPart, decimalPart] = s.split(".")
 		const latNumeral = LatitudeNumeral.decode(numeralPart)
 		const latDecimal = Decimal.decode(decimalPart ?? "000")
-		const lat = latNumeral + latDecimal
-		checkBounds(lat, "latitude", [-90_000_000, 90_000_000])
+		const lat = new Latitude(latNumeral + latDecimal)
+		checkBounds(lat.n, "latitude", [-90, 90])
 		return lat
-	},
+	}
 }
 
 /** @param {number} n */
@@ -34,22 +54,33 @@ function getBeforeLastSixDigits(n) {
 	}
 }
 
-export const Longitude = {
-	/** @param {number} long */
-	encode: long => {
-		checkBounds(long, "longitude", [-180_000_000, 180_000_000])
-		const result = LongitudeNumeral.encode(long).concat(Decimal.encode(long))
+export class Longitude {
+	#n
+	/** @param {number} n */
+	constructor(n) {
+		checkBounds(n, "longitude", [-180, 180])
+		this.#n = normalize(n)
+	}
+
+	get n() {
+		return this.#n / normalization_factor
+	}
+
+	encode() {
+		const result = LongitudeNumeral.encode(this.#n).concat(
+			Decimal.encode(this.#n)
+		)
 		return result
-	},
+	}
 	/** @param {string} s */
-	decode: s => {
+	static decode(s) {
 		const [numeralPart, decimalPart] = s.split(".")
 		const longNumeral = LongitudeNumeral.decode(numeralPart)
 		const longDecimal = Decimal.decode(decimalPart ?? "000")
-		const long = longNumeral + longDecimal
-		checkBounds(long, "longitude", [-180_000_000, 180_000_000])
+		const long = new Longitude(longNumeral + longDecimal)
+		checkBounds(long.n, "longitude", [-180, 180])
 		return long
-	},
+	}
 }
 
 const LongitudeNumeral = {
@@ -138,41 +169,7 @@ const GroundBase34 = {
 	},
 }
 
-const Decimal = {
-	/** @param {number} n */
-	encode: n => {
-		const lastSixDigits = n.toString().slice(-6)
-		const decimalPortion = lastSixDigits === "0" ? "" : lastSixDigits
-
-		const threeDigitChunks = chunkSubstr(decimalPortion.toString(), 3).map(s =>
-			s.padEnd(3, "0")
-		)
-
-		return threeDigitChunks.map(s => Base32.encode(parseInt(s))).join("")
-	},
-	/** @type {(s: string) => number} */
-	decode: s => {
-		const threeDigitChunks = chunkSubstr(s, 1)
-		const decimalDigits = threeDigitChunks
-			.map(ch => Base32.decode(ch).toString().padStart(3, "0"))
-			.join("")
-		return parseFloat(`0.${decimalDigits}`)
-	},
-}
-
 // Helper Functions, not defined in ISO
-
-/** @type {(str: string, size: number) => string[]} */
-const chunkSubstr = (str, size) => {
-	const numChunks = Math.ceil(str.length / size)
-	const chunks = new Array(numChunks)
-
-	for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-		chunks[i] = str.substring(o, o + size)
-	}
-
-	return chunks
-}
 
 /** @type {(value: string, name: string, expectedLen: number) => void} */
 const checkLen = (value, name, expectedLen) => {
