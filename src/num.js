@@ -1,10 +1,11 @@
+export const normalization_factor = 1_000_000
+
 export const Decimal = {
 	/** @param {number} n */
 	encode: n => {
-		const lastSixDigits = n.toString().slice(-6)
-		const decimalPortion = lastSixDigits === "0" ? "" : lastSixDigits
+		const decimalPart = n % normalization_factor
 
-		const threeDigitChunks = chunkSubstr(decimalPortion.toString(), 3).map(s =>
+		const threeDigitChunks = chunkSubstr(decimalPart.toString(), 3).map(s =>
 			s.padEnd(3, "0")
 		)
 
@@ -18,6 +19,18 @@ export const Decimal = {
 			.join("")
 		return parseFloat(`0.${decimalDigits}`)
 	},
+}
+
+/** @param {number} n */
+export const getBeforeLastSixDigits = n => {
+	const numberStr = n.toString()
+	const length = numberStr.length
+
+	if (length <= 6) {
+		return 0
+	} else {
+		return parseInt(numberStr.slice(0, -6), 10)
+	}
 }
 
 /** @type {(str: string, size: number) => string[]} */

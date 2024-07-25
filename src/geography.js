@@ -1,6 +1,13 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
-import { Base14, Base19, Base34, Decimal } from "./num.js"
+import {
+	Base14,
+	Base19,
+	Base34,
+	Decimal,
+	getBeforeLastSixDigits,
+	normalization_factor,
+} from "./num.js"
 
 /**
  * According to the ISO standard:
@@ -11,7 +18,6 @@ import { Base14, Base19, Base34, Decimal } from "./num.js"
  * @param {number} n
  */
 const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
-const normalization_factor = 1_000_000
 
 export class Latitude {
 	#n
@@ -26,9 +32,10 @@ export class Latitude {
 	}
 
 	encode() {
-		const result = LatitudeNumeral.encode(this.#n)
-			.concat(Decimal.encode(this.#n))
-			.padStart(2, "0")
+		const numeral = LatitudeNumeral.encode(this.#n)
+		const decimal = Decimal.encode(this.#n)
+		const result = numeral.concat(decimal === "0" ? "" : decimal).padEnd(2, "0")
+		checkLen(result, "encoded decimal", 2)
 		return result
 	}
 	/** @param {string} s */
@@ -39,18 +46,6 @@ export class Latitude {
 		const lat = new Latitude(latNumeral + latDecimal)
 		checkBounds(lat.n, "latitude", [-90, 90])
 		return lat
-	}
-}
-
-/** @param {number} n */
-function getBeforeLastSixDigits(n) {
-	const numberStr = n.toString()
-	const length = numberStr.length
-
-	if (length <= 6) {
-		return 0
-	} else {
-		return parseInt(numberStr.slice(0, -6), 10)
 	}
 }
 
@@ -67,9 +62,10 @@ export class Longitude {
 	}
 
 	encode() {
-		const result = LongitudeNumeral.encode(this.#n).concat(
-			Decimal.encode(this.#n)
-		)
+		const numeral = LongitudeNumeral.encode(this.#n)
+		const decimal = Decimal.encode(this.#n)
+		const result = numeral.concat(decimal === "0" ? "" : decimal).padEnd(2, "0")
+		checkLen(result, "encoded decimal", 2)
 		return result
 	}
 	/** @param {string} s */
