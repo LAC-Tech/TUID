@@ -47,7 +47,6 @@ export class Latitude {
 	encode() {
 		const numeral = LatitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
-		console.log({ n: this.n, numeral, decimal })
 		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}
@@ -89,7 +88,6 @@ export class Longitude {
 	encode() {
 		const numeral = LongitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
-		console.log({ n: this.n, numeral, decimal })
 		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}

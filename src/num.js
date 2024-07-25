@@ -5,14 +5,11 @@ export const Decimal = {
 	encode: n => {
 		const decimalPart = n.toString().slice(-6)
 
-		console.log({ n, decimalPart })
-
 		const threeDigitChunks = chunkSubstr(decimalPart.toString(), 3).map(s => {
-			console.log(s)
-			return s.padEnd(3, "0")
+			return Base32.encode(parseInt(s))
 		})
 
-		return threeDigitChunks.map(s => Base32.encode(parseInt(s))).join("")
+		return threeDigitChunks.join("")
 	},
 	/** @type {(s: string) => number} */
 	decode: s => {

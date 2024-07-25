@@ -28,8 +28,8 @@ describe("encoding/decoding is reversible", () => {
 	test("Point", () =>
 		fc.assert(
 			fc.property(
-				fc.float({ min: -90, max: 90 }),
-				fc.float({ min: -180, max: 180 }),
+				fc.double({ min: -90, max: 90, noNaN: true }),
+				fc.double({ min: -180, max: 180, noNaN: true }),
 				/**
 				 * @param {number} lat
 				 * @param {number} long
