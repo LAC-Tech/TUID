@@ -35,9 +35,11 @@ export class Point {
 	#lat
 	#long
 
-	/** @param {Latitude} lat
+	/**
+	 * @param {Latitude} lat
 	 * @param {Longitude} long
-	 * */
+	 * @private
+	 */
 	constructor(lat, long) {
 		this.#lat = lat
 		this.#long = long
@@ -45,7 +47,7 @@ export class Point {
 
 	/** @param {{lat: number, long: number}} p */
 	static fromNumbers({ lat, long }) {
-		return new Point(new Latitude(lat), new Longitude(long))
+		return new Point(Latitude.fromNumber(lat), Longitude.fromNumber(long))
 	}
 
 	get lat() {

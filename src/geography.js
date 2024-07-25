@@ -21,10 +21,23 @@ const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
 
 export class Latitude {
 	#n
+
+	/**
+	 * @param {number} normalizedNumber
+	 * @private
+	 */
+	constructor(normalizedNumber) {
+		console.assert(
+			Number.isInteger(normalizedNumber),
+			"internal of latitude must be an integer"
+		)
+		this.#n = normalizedNumber
+	}
+
 	/** @param {number} n */
-	constructor(n) {
+	static fromNumber(n) {
 		checkBounds(n, "latitude", [-90, 90])
-		this.#n = normalize(n)
+		return new Latitude(normalize(n))
 	}
 
 	get n() {
@@ -34,6 +47,7 @@ export class Latitude {
 	encode() {
 		const numeral = LatitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
+		console.log({ n: this.n, numeral, decimal })
 		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}
@@ -50,10 +64,22 @@ export class Latitude {
 
 export class Longitude {
 	#n
+	/**
+	 * @param {number} normalizedNumber
+	 * @private
+	 */
+	constructor(normalizedNumber) {
+		console.assert(
+			Number.isInteger(normalizedNumber),
+			"internal of longitude must be an integer"
+		)
+		this.#n = normalizedNumber
+	}
+
 	/** @param {number} n */
-	constructor(n) {
+	static fromNumber(n) {
 		checkBounds(n, "longitude", [-180, 180])
-		this.#n = normalize(n)
+		return new Longitude(normalize(n))
 	}
 
 	get n() {
@@ -63,6 +89,7 @@ export class Longitude {
 	encode() {
 		const numeral = LongitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
+		console.log({ n: this.n, numeral, decimal })
 		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}
