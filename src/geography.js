@@ -34,8 +34,7 @@ export class Latitude {
 	encode() {
 		const numeral = LatitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
-		const result = numeral.concat(decimal === "0" ? "" : decimal).padEnd(2, "0")
-		checkLen(result, "encoded decimal", 2)
+		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}
 	/** @param {string} s */
@@ -64,10 +63,10 @@ export class Longitude {
 	encode() {
 		const numeral = LongitudeNumeral.encode(this.#n)
 		const decimal = Decimal.encode(this.#n)
-		const result = numeral.concat(decimal === "0" ? "" : decimal).padEnd(2, "0")
-		checkLen(result, "encoded decimal", 2)
+		const result = numeral.concat(decimal).padEnd(2, "0")
 		return result
 	}
+
 	/** @param {string} s */
 	static decode(s) {
 		const [numeralPart, decimalPart] = s.split(".")

@@ -10,7 +10,7 @@ export class NLI {
 
 	/** @param {{lat: number, long: number, elevation: Elevation}} args */
 	constructor({ lat, long, elevation }) {
-		this.point = new Point({ lat, long })
+		this.point = Point.fromNumbers({ lat, long })
 		this.elevation = elevation
 	}
 
@@ -35,10 +35,17 @@ export class Point {
 	#lat
 	#long
 
+	/** @param {Latitude} lat
+	 * @param {Longitude} long
+	 * */
+	constructor(lat, long) {
+		this.#lat = lat
+		this.#long = long
+	}
+
 	/** @param {{lat: number, long: number}} p */
-	constructor({ lat, long }) {
-		this.#lat = new Latitude(lat)
-		this.#long = new Longitude(long)
+	static fromNumbers({ lat, long }) {
+		return new Point(new Latitude(lat), new Longitude(long))
 	}
 
 	get lat() {
@@ -58,11 +65,7 @@ export class Point {
 		const [latPart, longPart] = s.split("-")
 		const lat = Latitude.decode(latPart)
 		const long = Longitude.decode(longPart)
-
-		const point = Object.create(Point.prototype)
-		point.#lat = lat
-		point.#long = long
-		return point
+		return new Point(lat, long)
 	}
 }
 
