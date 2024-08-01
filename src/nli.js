@@ -4,57 +4,27 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 /** Natural location identifier. */
 export class NLI {
 	// At this point we are no longer hiding any information, so these are public
-	#point
+	#lat
+	#long
 	elevation
 
 	/** @param {{lat: number, long: number, elevation: Elevation}} args */
-	constructor({ lat, long, elevation }) {
-		this.#point = Point.fromNumbers({ lat, long })
-		this.elevation = elevation
-	}
-
-	get lat() {
-		return this.#point.lat
-	}
-
-	get long() {
-		return this.#point.long
-	}
-	/**
-	 * Produces a stand alone NLI (with prefix)
-	 * @return {string}
-	 */
-	encode() {
-		return `ISO.NLI${this.encodeWithoutPrefix()}`
+	static create({ lat, long, elevation }) {
+		return new NLI({
+			lat: Latitude.fromNumber(lat),
+			long: Longitude.fromNumber(long),
+			elevation,
+		})
 	}
 
 	/**
-	 * Used as a part of TUID or another identifier.
-	 * @return {string}
-	 */
-	encodeWithoutPrefix() {
-		return `${this.#point.encode()}-${Elevation.encode(this.elevation)}`
-	}
-}
-
-// TODO: delete this class, fold into NLI
-export class Point {
-	#lat
-	#long
-
-	/**
-	 * @param {Latitude} lat
-	 * @param {Longitude} long
+	 * @param {{lat: Latitude, long: Longitude, elevation: Elevation}} args
 	 * @private
 	 */
-	constructor(lat, long) {
+	constructor({ lat, long, elevation }) {
 		this.#lat = lat
 		this.#long = long
-	}
-
-	/** @param {{lat: number, long: number}} p */
-	static fromNumbers({ lat, long }) {
-		return new Point(Latitude.fromNumber(lat), Longitude.fromNumber(long))
+		this.elevation = elevation
 	}
 
 	get lat() {
@@ -65,20 +35,37 @@ export class Point {
 		return this.#long.n
 	}
 
+	static prefix = "ISO.NLI"
+
+	/**
+	 * Produces a stand alone NLI (with prefix)
+	 * @return {string}
+	 */
 	encode() {
-		return `${this.#lat.encode()}-${this.#long.encode()}`
+		return `${NLI.prefix}${this.encodeWithoutPrefix()}`
+	}
+
+	/**
+	 * Used as a part of TUID or another identifier.
+	 * @return {string}
+	 */
+	encodeWithoutPrefix() {
+		return `${this.#lat.encode()}-${this.#long.encode()}-${Elevation.encode(this.elevation)}`
 	}
 
 	/** @param {string} s */
 	static decode(s) {
-		const [latPart, longPart] = s.split("-")
+		const [latPart, longPart, elevationPart] = s
+			.replace(NLI.prefix, "")
+			.split("-")
 		const lat = Latitude.decode(latPart)
 		const long = Longitude.decode(longPart)
-		return new Point(lat, long)
+		const elevation = Elevation.decode(elevationPart)
+		return new NLI({ lat, long, elevation })
 	}
 }
 
-export const Elevation = {
+const Elevation = {
 	/** @param {Elevation} elevation */
 	encode: elevation => {
 		if ("storey" in elevation) {

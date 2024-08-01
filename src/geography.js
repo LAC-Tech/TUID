@@ -27,10 +27,7 @@ export class Latitude {
 	 * @private
 	 */
 	constructor(normalizedNumber) {
-		console.assert(
-			Number.isInteger(normalizedNumber),
-			"internal of latitude must be an integer"
-		)
+		checkIsInt(normalizedNumber, "latitude")
 		this.#n = normalizedNumber
 	}
 
@@ -68,10 +65,7 @@ export class Longitude {
 	 * @private
 	 */
 	constructor(normalizedNumber) {
-		console.assert(
-			Number.isInteger(normalizedNumber),
-			"internal of longitude must be an integer"
-		)
+		checkIsInt(normalizedNumber, "longitude")
 		this.#n = normalizedNumber
 	}
 
