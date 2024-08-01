@@ -12,7 +12,7 @@ test("Embassy of New Zealand in Washington DC", () => {
 		long: -77.064241,
 		elevation: { storey: 0 },
 	}).encode()
-	expect(actual).toBe("ISO.NLI92SMU6-58207H-H0")
+	expect(actual).toBe("ISO.NLI:92SMU6-58207H-H0")
 })
 
 test("Ikamatua Hotel", () => {
@@ -21,7 +21,7 @@ test("Ikamatua Hotel", () => {
 		long: 171.684597,
 		elevation: { storey: 0 },
 	}).encode()
-	expect(actual).toBe("ISO.NLI368FBM-Y9LCYL-H0")
+	expect(actual).toBe("ISO.NLI:368FBM-Y9LCYL-H0")
 })
 
 describe("encoding/decoding is reversible", () => {

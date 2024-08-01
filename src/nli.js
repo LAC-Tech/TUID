@@ -35,7 +35,7 @@ export class NLI {
 		return this.#long.n
 	}
 
-	static prefix = "ISO.NLI"
+	static prefix = "ISO.NLI:"
 
 	/**
 	 * Produces a stand alone NLI (with prefix)
