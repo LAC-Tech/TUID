@@ -154,39 +154,46 @@ export const GroundLevel = {
 	},
 }
 
+/**
+ * @param {number} n
+ * @param {string} label
+ * @param {[number, number]} bounds
+ * @param {number} length
+ * @returns {string}
+ */
+const encodeBase34 = (n, label, bounds, length) => {
+	checkBounds(n, "n", bounds)
+	const result = Base34.encode(n)
+	checkLen(result, label, length)
+	return result
+}
+
+/**
+ * @param {string} s
+ * @param {string} label
+ * @param {[number, number]} bounds
+ * @param {number} length
+ * @returns {number}
+ */
+const decodeBase34 = (s, label, bounds, length) => {
+	checkLen(s, label, length)
+	const result = Base34.decode(s)
+	checkBounds(result, "result", bounds)
+	return result
+}
+
 const StoreyBase34 = {
 	/** @param {number} n */
-	encode: n => {
-		checkBounds(n, "n", [0, 1156])
-		const result = Base34.encode(n)
-		checkLen(result, "storey", 2)
-		return result
-	},
+	encode: n => encodeBase34(n, "storey", [0, 1156], 2),
 	/** @type {(s: string) => number} */
-	decode: s => {
-		checkLen(s, "storey", 2)
-		const result = Base34.decode(s)
-		checkBounds(result, "result", [0, 1156])
-		return result
-	},
+	decode: s => decodeBase34(s, "storey", [0, 1156], 2),
 }
 
 const GroundBase34 = {
 	/** @param {number} n */
-	encode: n => {
-		checkBounds(n, "n", [0, 39304])
-		const result = Base34.encode(n)
-		checkLen(result, "ground", 3)
-		return result
-	},
-
+	encode: n => encodeBase34(n, "ground", [0, 39304], 3),
 	/** @type {(s: string) => number} */
-	decode: s => {
-		checkLen(s, "ground", 3)
-		const result = Base34.decode(s)
-		checkBounds(result, "result", [0, 39304])
-		return result
-	},
+	decode: s => decodeBase34(s, "ground", [0, 39304], 3),
 }
 
 // Helper Functions, not defined in ISO

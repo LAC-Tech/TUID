@@ -5,15 +5,22 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
  */
 export class NLI {
 	// At this point we are no longer hiding any information, so these are public
-	point
+	#point
 	elevation
 
 	/** @param {{lat: number, long: number, elevation: Elevation}} args */
 	constructor({ lat, long, elevation }) {
-		this.point = Point.fromNumbers({ lat, long })
+		this.#point = Point.fromNumbers({ lat, long })
 		this.elevation = elevation
 	}
 
+	get lat() {
+		return this.#point.lat
+	}
+
+	get long() {
+		return this.#point.long
+	}
 	/**
 	 * Produces a stand alone NLI (with prefix)
 	 * @return {string}
@@ -27,10 +34,11 @@ export class NLI {
 	 * @return {string}
 	 */
 	encodeWithoutPrefix() {
-		return `${this.point.encode()}-${Elevation.encode(this.elevation)}`
+		return `${this.#point.encode()}-${Elevation.encode(this.elevation)}`
 	}
 }
 
+// TODO: delete this class, fold into NLI
 export class Point {
 	#lat
 	#long
@@ -85,6 +93,12 @@ export const Elevation = {
 
 	/** @type {(s: string) => Elevation} */
 	decode: s => {
-		throw "TODO"
+		if (s.length == 3) {
+			return { ground: GroundLevel.decode(s) }
+		} else if (s.length == 2) {
+			return { storey: Storey.decode(s) }
+		} else {
+			throw new Error("not an elevation")
+		}
 	},
 }
