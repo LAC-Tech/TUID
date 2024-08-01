@@ -4,7 +4,7 @@
 	"description": "Transport Unit Identifier",
 	"main": "index.js",
 	"scripts": {
-		"docs": "jsdoc2md src/index.js > README.md",
+		"docs": "jsdoc2md src/index.js src/nli.js > README.md",
 		"test": "vitest"
 	},
 	"type": "module",
@@ -14,7 +14,8 @@
 		"@types/node": "^20.12.11",
 		"fast-check": "^3.19.0",
 		"jsdoc-to-markdown": "^8.0.1",
-		"tsdoc-markdown": "^0.6.0",
+		"typedoc": "^0.26.5",
+		"typedoc-plugin-markdown": "^4.2.3",
 		"typescript": "^5.4.5",
 		"vitest": "^1.6.0"
 	}
