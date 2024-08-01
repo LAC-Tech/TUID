@@ -1,8 +1,7 @@
 import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
-/**
- * @typedef {import('./types.d.ts').Elevation} Elevation
- * Natural location identifier.
- */
+/** @typedef {import('./types.d.ts').Elevation} Elevation */
+
+/** Natural location identifier. */
 export class NLI {
 	// At this point we are no longer hiding any information, so these are public
 	#point

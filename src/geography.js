@@ -123,12 +123,15 @@ const LatitudeNumeral = {
 	},
 }
 
+/** @param {number} n */
+const normalizeNegZero = n => (n == -0 ? 0 : n)
+
 export const Storey = {
 	/** @param {number} storey */
 	encode: storey => {
-		// TODO: where are these numbers from?
+		checkIsInt(storey, "storey")
 		checkBounds(storey, "storey", [-578, 577])
-		return StoreyBase34.encode(storey + 578)
+		return StoreyBase34.encode(normalizeNegZero(storey + 578))
 	},
 
 	/** @type {(s: string) => number} */
@@ -142,8 +145,9 @@ export const Storey = {
 export const GroundLevel = {
 	/** @param {number} groundLevel */
 	encode: groundLevel => {
+		checkIsInt(groundLevel, "groundLevel")
 		checkBounds(groundLevel, "groundLevel", [-19652, 19651])
-		return GroundBase34.encode(groundLevel + 19652)
+		return GroundBase34.encode(normalizeNegZero(groundLevel + 19652))
 	},
 
 	/** @type {(s: string) => number} */
@@ -163,7 +167,7 @@ export const GroundLevel = {
  */
 const encodeBase34 = (n, label, bounds, length) => {
 	checkBounds(n, "n", bounds)
-	const result = Base34.encode(n)
+	const result = Base34.encode(n).padStart(length, "0")
 	checkLen(result, label, length)
 	return result
 }
@@ -215,4 +219,11 @@ const checkBounds = (value, paramName, [min, max]) => {
 	const msg = `out of bounds error for ${paramName}: expecting value between ${min} and ${max}, given ${value}`
 
 	throw new Error(msg)
+}
+
+/** @type {(n: number, paramName: string) => void} */
+const checkIsInt = (n, paramName) => {
+	if (!Number.isInteger(n)) {
+		throw new Error(`${paramName} (${n}) is not an integer`)
+	}
 }

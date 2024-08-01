@@ -1,9 +1,10 @@
 import fc from "fast-check"
 
 import { describe, expect, test } from "vitest"
-import { Point } from "./nli.js"
+import { Elevation, Point } from "./nli.js"
 import { NLI } from "./index.js"
 
+/** @typedef {import('./types.d.ts').Elevation} Elevation */
 // Testing against data from https://e-nli.org/
 
 test("Embassy of New Zealand in Washington DC", () => {
@@ -37,6 +38,21 @@ describe("encoding/decoding is reversible", () => {
 				(lat, long) => {
 					const actual = Point.fromNumbers({ lat, long })
 					const expected = Point.decode(actual.encode())
+					expect(actual).toStrictEqual(expected)
+				}
+			)
+		))
+	test("Elevation", () =>
+		fc.assert(
+			fc.property(
+				fc.oneof(
+					fc.record({ storey: fc.integer({ min: -578, max: 577 }) }),
+					fc.record({ ground: fc.integer({ min: -1000, max: 1000 }) })
+				),
+				/** @param {Elevation} elevation */
+				elevation => {
+					const actual = elevation
+					const expected = Elevation.decode(Elevation.encode(elevation))
 					expect(actual).toStrictEqual(expected)
 				}
 			)
