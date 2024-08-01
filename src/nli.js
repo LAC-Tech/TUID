@@ -63,6 +63,10 @@ export class NLI {
 		const elevation = Elevation.decode(elevationPart)
 		return new NLI({ lat, long, elevation })
 	}
+
+	toString() {
+		return `{lat: ${this.lat}, long: ${this.long}, elevation: ${JSON.stringify(this.elevation)}}`
+	}
 }
 
 const Elevation = {

@@ -41,7 +41,10 @@ describe("encoding/decoding is reversible", () => {
 				 */
 				(lat, long, elevation) => {
 					const actual = NLI.create({ lat, long, elevation })
-					const expected = NLI.decode(actual.encode())
+					console.log(actual.toString())
+					const encoded = actual.encode()
+					console.log(`${encoded}\n`)
+					const expected = NLI.decode(encoded)
 					expect(actual).toStrictEqual(expected)
 				}
 			)
