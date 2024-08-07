@@ -1,28 +1,48 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
-import {
-	Base14,
-	Base19,
-	Base34,
-	Decimal,
-	getBeforeLastSixDigits,
-} from "./num.js"
+import { Base14, Base19, Base34, Decimal } from "./num.js"
 
-/**
- * According to the ISO standard:
- * - we need 6 decimal points
- * - we're not encoding the sign in the string
- *
- * Therefore some processing must be applied to user supplied IEE754 numbers
- * @param {number} n
- */
-/** @param {number} n */
-const normalizeCoord = n => {
-	const intPart = Math.floor(n)
-	checkIsInt(intPart, "intPart")
-	const fractionalPart = n - intPart
-	const newFractionalPart = Math.round(fractionalPart * 1e6)
-	return intPart + newFractionalPart
+// Common functionality for lat and long
+const Coord = {
+	/**
+	 * According to the ISO standard:
+	 * - we need 6 decimal points
+	 * - we're not encoding the sign in the string
+	 *
+	 * Therefore some processing must be applied to user supplied IEE754 numbers
+	 * @param {number} n
+	 */
+	normalize: n => {
+		const intPart = Math.floor(n)
+		checkIsInt(intPart, "intPart")
+		const fractionalPart = n - intPart
+		const newFractionalPart = Math.trunc(fractionalPart * 1e6) / 1e6
+		return intPart + newFractionalPart
+	},
+
+	/**
+	 * @param {(s: string) => number} numeralDecode
+	 * @param {string} s
+	 */
+	decode: (numeralDecode, s) => {
+		checkLen(s, "s", 6)
+		const numeralPart = s.slice(0, 2)
+		const decimalPart = s.slice(2)
+		const numeral = numeralDecode(numeralPart)
+		const decimal = Decimal.decode(decimalPart ?? "000")
+		return numeral + decimal
+	},
+
+	/**
+	 * @param {(n: number) => string} numeralEncode
+	 * @param {number} n
+	 */
+	encode: (numeralEncode, n) => {
+		const numeral = numeralEncode(n)
+		const decimal = Decimal.encode(n)
+		const result = numeral.concat(decimal).padStart(6, "0")
+		return result
+	},
 }
 
 export class Latitude {
@@ -30,26 +50,18 @@ export class Latitude {
 
 	/** @param {number} n */
 	constructor(n) {
-		console.log(n)
 		checkBounds(n, "latitude", [-90, 90])
-		this.n = normalizeCoord(n)
+		this.n = Coord.normalize(n)
 	}
 
 	encode() {
-		const numeral = LatitudeNumeral.encode(this.n)
-		const decimal = Decimal.encode(this.n)
-		const result = numeral.concat(decimal).padStart(6, "0")
-		return result
+		return Coord.encode(LatitudeNumeral.encode, this.n)
 	}
 
 	/** @param {string} s */
 	static decode(s) {
-		// TODO: which parts of the string are numeral, which are decimal?
-		// I suspect first 2 digits are numeral, last 4 are decimal
-		const [numeralPart, decimalPart] = s.split(".")
-		const latNumeral = LatitudeNumeral.decode(numeralPart)
-		const latDecimal = Decimal.decode(decimalPart ?? "000")
-		const lat = new Latitude(latNumeral + latDecimal)
+		const n = Coord.decode(LatitudeNumeral.decode, s)
+		const lat = new Latitude(n)
 		checkBounds(lat.n, "latitude", [-90, 90])
 		return lat
 	}
@@ -60,24 +72,18 @@ export class Longitude {
 
 	/** @param {number} n */
 	constructor(n) {
-		console.log(n)
 		checkBounds(n, "longitude", [-180, 180])
-		this.n = normalizeCoord(n)
+		this.n = Coord.normalize(n)
 	}
 
 	encode() {
-		const numeral = LongitudeNumeral.encode(this.n)
-		const decimal = Decimal.encode(this.n)
-		const result = numeral.concat(decimal).padStart(6, "0")
-		return result
+		return Coord.encode(LongitudeNumeral.encode, this.n)
 	}
 
 	/** @param {string} s */
 	static decode(s) {
-		const [numeralPart, decimalPart] = s.split(".")
-		const longNumeral = LongitudeNumeral.decode(numeralPart)
-		const longDecimal = Decimal.decode(decimalPart ?? "000")
-		const long = new Longitude(longNumeral + longDecimal)
+		const n = Coord.decode(LongitudeNumeral.decode, s)
+		const long = new Longitude(n)
 		checkBounds(long.n, "longitude", [-180, 180])
 		return long
 	}
@@ -85,22 +91,16 @@ export class Longitude {
 
 const LongitudeNumeral = {
 	/** @param {number} longitude */
-	encode: longitude => Base19.encode(getBeforeLastSixDigits(longitude) + 180),
+	encode: longitude => Base19.encode(Math.floor(longitude) + 180),
 	/** @type {(s: string) => number} */
-	decode: s => {
-		const decodedValue = Base19.decode(s)
-		return decodedValue - 180
-	},
+	decode: s => Base19.decode(s) - 180,
 }
 
 const LatitudeNumeral = {
 	/** @param {number} latitude */
-	encode: latitude => Base14.encode(getBeforeLastSixDigits(latitude) + 90),
+	encode: latitude => Base14.encode(Math.floor(latitude) + 90),
 	/** @type {(s: string) => number} */
-	decode: s => {
-		const decodedValue = Base14.decode(s)
-		return decodedValue - 90
-	},
+	decode: s => Base14.decode(s) - 90,
 }
 
 /** @param {number} n */

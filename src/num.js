@@ -19,18 +19,6 @@ export const Decimal = {
 	},
 }
 
-/** @param {number} n */
-export const getBeforeLastSixDigits = n => {
-	const numberStr = n.toString()
-	const length = numberStr.length
-
-	if (length <= 6) {
-		return 0
-	} else {
-		return parseInt(numberStr.slice(0, -6), 10)
-	}
-}
-
 /** @type {(str: string, size: number) => string[]} */
 const chunkSubstr = (str, size) => {
 	const numChunks = Math.ceil(str.length / size)
