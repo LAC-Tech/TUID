@@ -1,6 +1,7 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
 import { Base14, Base19, Base34, Decimal } from "./num.js"
+import * as check from "./check.js"
 
 // Common functionality for lat and long
 const Coord = {
@@ -13,10 +14,11 @@ const Coord = {
 	 * @param {number} n
 	 */
 	normalize: n => {
-		const intPart = Math.floor(n)
-		checkIsInt(intPart, "intPart")
-		const fractionalPart = n - intPart
+		const intPart = Math.trunc(n)
+		check.isInt(intPart, "intPart")
+		const fractionalPart = Math.abs(n - intPart)
 		const newFractionalPart = Math.trunc(fractionalPart * 1e6) / 1e6
+		console.log({ n, intPart, newFractionalPart })
 		return intPart + newFractionalPart
 	},
 
@@ -25,7 +27,7 @@ const Coord = {
 	 * @param {string} s
 	 */
 	decode: (numeralDecode, s) => {
-		checkLen(s, "s", 6)
+		check.len(s, "s", 6)
 		const numeralPart = s.slice(0, 2)
 		const decimalPart = s.slice(2)
 		const numeral = numeralDecode(numeralPart)
@@ -41,6 +43,7 @@ const Coord = {
 		const numeral = numeralEncode(n)
 		const decimal = Decimal.encode(n)
 		const result = numeral.concat(decimal).padStart(6, "0")
+		check.len(result, "result", 6)
 		return result
 	},
 }
@@ -50,7 +53,7 @@ export class Latitude {
 
 	/** @param {number} n */
 	constructor(n) {
-		checkBounds(n, "latitude", [-90, 90])
+		check.bounds(n, "latitude", [-90, 90])
 		this.n = Coord.normalize(n)
 	}
 
@@ -62,7 +65,7 @@ export class Latitude {
 	static decode(s) {
 		const n = Coord.decode(LatitudeNumeral.decode, s)
 		const lat = new Latitude(n)
-		checkBounds(lat.n, "latitude", [-90, 90])
+		check.bounds(lat.n, "latitude", [-90, 90])
 		return lat
 	}
 }
@@ -72,7 +75,7 @@ export class Longitude {
 
 	/** @param {number} n */
 	constructor(n) {
-		checkBounds(n, "longitude", [-180, 180])
+		check.bounds(n, "longitude", [-180, 180])
 		this.n = Coord.normalize(n)
 	}
 
@@ -84,7 +87,7 @@ export class Longitude {
 	static decode(s) {
 		const n = Coord.decode(LongitudeNumeral.decode, s)
 		const long = new Longitude(n)
-		checkBounds(long.n, "longitude", [-180, 180])
+		check.bounds(long.n, "longitude", [-180, 180])
 		return long
 	}
 }
@@ -109,15 +112,15 @@ const normalizeNegZero = n => (n == -0 ? 0 : n)
 export const Storey = {
 	/** @param {number} storey */
 	encode: storey => {
-		checkIsInt(storey, "storey")
-		checkBounds(storey, "storey", [-578, 577])
+		check.isInt(storey, "storey")
+		check.bounds(storey, "storey", [-578, 577])
 		return StoreyBase34.encode(normalizeNegZero(storey + 578))
 	},
 
 	/** @type {(s: string) => number} */
 	decode: s => {
 		const decodedValue = StoreyBase34.decode(s)
-		checkBounds(decodedValue, "decodedValue", [0, 1156])
+		check.bounds(decodedValue, "decodedValue", [0, 1156])
 		return decodedValue - 578
 	},
 }
@@ -125,15 +128,15 @@ export const Storey = {
 export const GroundLevel = {
 	/** @param {number} groundLevel */
 	encode: groundLevel => {
-		checkIsInt(groundLevel, "groundLevel")
-		checkBounds(groundLevel, "groundLevel", [-19652, 19651])
+		check.isInt(groundLevel, "groundLevel")
+		check.bounds(groundLevel, "groundLevel", [-19652, 19651])
 		return GroundBase34.encode(normalizeNegZero(groundLevel + 19652))
 	},
 
 	/** @type {(s: string) => number} */
 	decode: s => {
 		const decodedValue = GroundBase34.decode(s)
-		checkBounds(decodedValue, "decodedValue", [0, 39304])
+		check.bounds(decodedValue, "decodedValue", [0, 39304])
 		return decodedValue - 19652
 	},
 }
@@ -146,9 +149,9 @@ export const GroundLevel = {
  * @returns {string}
  */
 const encodeBase34 = (n, label, bounds, length) => {
-	checkBounds(n, "n", bounds)
+	check.bounds(n, "n", bounds)
 	const result = Base34.encode(n).padStart(length, "0")
-	checkLen(result, label, length)
+	check.len(result, label, length)
 	return result
 }
 
@@ -160,9 +163,9 @@ const encodeBase34 = (n, label, bounds, length) => {
  * @returns {number}
  */
 const decodeBase34 = (s, label, bounds, length) => {
-	checkLen(s, label, length)
+	check.len(s, label, length)
 	const result = Base34.decode(s)
-	checkBounds(result, "result", bounds)
+	check.bounds(result, "result", bounds)
 	return result
 }
 
@@ -178,32 +181,4 @@ const GroundBase34 = {
 	encode: n => encodeBase34(n, "ground", [0, 39304], 3),
 	/** @type {(s: string) => number} */
 	decode: s => decodeBase34(s, "ground", [0, 39304], 3),
-}
-
-// Helper Functions, not defined in ISO
-
-/** @type {(value: string, name: string, expectedLen: number) => void} */
-const checkLen = (value, name, expectedLen) => {
-	if (value.length != expectedLen) {
-		throw new Error(
-			`${name} should have length ${expectedLen} digits, but given length ${value.length}`
-		)
-	}
-}
-/**
- * @type {(value: number, paramName: string, bounds: [number, number]) => void}
- */
-const checkBounds = (value, paramName, [min, max]) => {
-	if (value >= min && value <= max) return
-
-	const msg = `out of bounds error for ${paramName}: expecting value between ${min} and ${max}, given ${value}`
-
-	throw new Error(msg)
-}
-
-/** @type {(n: number, paramName: string) => void} */
-const checkIsInt = (n, paramName) => {
-	if (!Number.isInteger(n)) {
-		throw new Error(`${paramName} (${n}) is not an integer`)
-	}
 }

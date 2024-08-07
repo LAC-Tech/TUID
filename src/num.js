@@ -1,16 +1,21 @@
+import * as check from "./check.js"
+
 export const Decimal = {
 	/** @param {number} n */
 	encode: n => {
-		const decimalPart = n.toString().slice(-6)
-
+		const decimalPart = (n - Math.trunc(n)).toString()
 		const threeDigitChunks = chunkSubstr(decimalPart.toString(), 3).map(s => {
 			return Base32.encode(parseInt(s))
 		})
 
-		return threeDigitChunks.join("")
+		const result = threeDigitChunks.join("").padStart(4, "0")
+		console.log({ n, decimalPart, result })
+		check.len(result, "encoded decimal", 4)
+		return result
 	},
 	/** @type {(s: string) => number} */
 	decode: s => {
+		check.len(s, "encoded decimal", 4)
 		const threeDigitChunks = chunkSubstr(s, 1)
 		const decimalDigits = threeDigitChunks
 			.map(ch => Base32.decode(ch).toString().padStart(3, "0"))
