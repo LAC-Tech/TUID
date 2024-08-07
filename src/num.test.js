@@ -38,3 +38,13 @@ describe("encoding/decoding is reversible", () => {
 	test("base32", () => assertNoInfoLoss(Base32))
 	test("base34", () => assertNoInfoLoss(Base34))
 })
+
+describe("Ikamatua Hotel", () => {
+	test("lat numeral", () => expect(Base14.encode(-42 + 90)).toBe("36"))
+	test("long numeral", () => expect(Base19.encode(171 + 180)).toBe("Y9"))
+})
+
+describe("Embassy of New Zealand in Washington DC", () => {
+	test("lat numeral", () => expect(Base14.encode(38 + 90)).toBe("92"))
+	test("long numeral", () => expect(Base19.encode(-77 + 180)).toBe("58"))
+})

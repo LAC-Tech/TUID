@@ -6,7 +6,6 @@ import {
 	Base34,
 	Decimal,
 	getBeforeLastSixDigits,
-	normalization_factor,
 } from "./num.js"
 
 /**
@@ -17,38 +16,36 @@ import {
  * Therefore some processing must be applied to user supplied IEE754 numbers
  * @param {number} n
  */
-const normalize = n => (n == -0 ? 0 : Math.floor(n * normalization_factor))
+/** @param {number} n */
+const normalizeCoord = n => {
+	const intPart = Math.floor(n)
+	checkIsInt(intPart, "intPart")
+	const fractionalPart = n - intPart
+	const newFractionalPart = Math.round(fractionalPart * 1e6)
+	return intPart + newFractionalPart
+}
 
 export class Latitude {
-	#n
-
-	/**
-	 * @param {number} normalizedNumber
-	 * @private
-	 */
-	constructor(normalizedNumber) {
-		checkIsInt(normalizedNumber, "latitude")
-		this.#n = normalizedNumber
-	}
+	n
 
 	/** @param {number} n */
-	static fromNumber(n) {
+	constructor(n) {
+		console.log(n)
 		checkBounds(n, "latitude", [-90, 90])
-		return new Latitude(normalize(n))
-	}
-
-	get n() {
-		return this.#n / normalization_factor
+		this.n = normalizeCoord(n)
 	}
 
 	encode() {
-		const numeral = LatitudeNumeral.encode(this.#n)
-		const decimal = Decimal.encode(this.#n)
+		const numeral = LatitudeNumeral.encode(this.n)
+		const decimal = Decimal.encode(this.n)
 		const result = numeral.concat(decimal).padStart(6, "0")
 		return result
 	}
+
 	/** @param {string} s */
 	static decode(s) {
+		// TODO: which parts of the string are numeral, which are decimal?
+		// I suspect first 2 digits are numeral, last 4 are decimal
 		const [numeralPart, decimalPart] = s.split(".")
 		const latNumeral = LatitudeNumeral.decode(numeralPart)
 		const latDecimal = Decimal.decode(decimalPart ?? "000")
@@ -59,29 +56,18 @@ export class Latitude {
 }
 
 export class Longitude {
-	#n
-	/**
-	 * @param {number} normalizedNumber
-	 * @private
-	 */
-	constructor(normalizedNumber) {
-		checkIsInt(normalizedNumber, "longitude")
-		this.#n = normalizedNumber
-	}
+	n
 
 	/** @param {number} n */
-	static fromNumber(n) {
+	constructor(n) {
+		console.log(n)
 		checkBounds(n, "longitude", [-180, 180])
-		return new Longitude(normalize(n))
-	}
-
-	get n() {
-		return this.#n / normalization_factor
+		this.n = normalizeCoord(n)
 	}
 
 	encode() {
-		const numeral = LongitudeNumeral.encode(this.#n)
-		const decimal = Decimal.encode(this.#n)
+		const numeral = LongitudeNumeral.encode(this.n)
+		const decimal = Decimal.encode(this.n)
 		const result = numeral.concat(decimal).padStart(6, "0")
 		return result
 	}

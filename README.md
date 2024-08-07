@@ -10,4 +10,5 @@ const nli = const actual = NLI.create({
 })
 
 nli.encode() // "ISO.NLI:92SMU6-58207H-H0")
-```
+NLI.decode(nli.encode()).toString()
+NLI.decode(nli.encode()).toString()

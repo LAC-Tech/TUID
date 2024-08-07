@@ -1,5 +1,3 @@
-export const normalization_factor = 1_000_000
-
 export const Decimal = {
 	/** @param {number} n */
 	encode: n => {

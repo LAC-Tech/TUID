@@ -11,8 +11,8 @@ export class NLI {
 	/** @param {{lat: number, long: number, elevation: Elevation}} args */
 	static create({ lat, long, elevation }) {
 		return new NLI({
-			lat: Latitude.fromNumber(lat),
-			long: Longitude.fromNumber(long),
+			lat: new Latitude(lat),
+			long: new Longitude(long),
 			elevation,
 		})
 	}
