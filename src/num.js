@@ -1,124 +1,63 @@
 import * as check from "./check.js"
+import { Base14, Base19, Base32 } from "./base.js"
 
 export const Decimal = {
 	/** @param {number} n */
 	encode: n => {
-		const decimalPart = (n - Math.trunc(n)).toString()
-		const threeDigitChunks = chunkSubstr(decimalPart.toString(), 3).map(s => {
-			return Base32.encode(parseInt(s))
-		})
+		if (n > 999999) {
+			throw new Error(`expected n with less than 6 digits, given ${n}`)
+		}
 
-		const result = threeDigitChunks.join("").padStart(4, "0")
-		console.log({ n, decimalPart, result })
+		if (!Number.isSafeInteger(n)) {
+			throw new Error(`expected safe integer, given ${n}`)
+		}
+
+		if (n % 10 == 0) {
+			throw new Error(`expected int with no trailing 0s, given ${n}`)
+		}
+		check.isInt(n, "decimal encoding input")
+		const sixDigits = n.toString().padEnd(6, "0")
+		check.len(sixDigits, "six digits to decimal encode", 6)
+
+		const strParts = [sixDigits.slice(0, 3), sixDigits.slice(3, 6)]
+
+		const result = strParts
+			.map(s => Base32.encode(parseInt(s)).padStart(2, "0"))
+			.join("")
+
 		check.len(result, "encoded decimal", 4)
 		return result
 	},
+
 	/** @type {(s: string) => number} */
 	decode: s => {
-		check.len(s, "encoded decimal", 4)
-		const threeDigitChunks = chunkSubstr(s, 1)
-		const decimalDigits = threeDigitChunks
-			.map(ch => Base32.decode(ch).toString().padStart(3, "0"))
-			.join("")
-		return parseFloat(`0.${decimalDigits}`)
+		check.len(s, "decoded decimal", 4)
+		const strParts = [s.slice(0, 2), s.slice(2, 4)]
+		const decodedParts = strParts.map(Base32.decode)
+		const n = 1000 * decodedParts[0] + decodedParts[1]
+		return removeTrailingZeros(n)
 	},
 }
 
-/** @type {(str: string, size: number) => string[]} */
-const chunkSubstr = (str, size) => {
-	const numChunks = Math.ceil(str.length / size)
-	const chunks = new Array(numChunks)
+export const Integer = {
+	latitude: {
+		/** @param {number} latitude */
+		encode: latitude => Base14.encode(Math.floor(latitude) + 90),
+		/** @type {(s: string) => number} */
+		decode: s => Base14.decode(s) - 90,
+	},
+	longitude: {
+		/** @param {number} longitude */
+		encode: longitude => Base19.encode(Math.floor(longitude) + 180),
+		/** @type {(s: string) => number} */
+		decode: s => Base19.decode(s) - 180,
+	},
+}
 
-	for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-		chunks[i] = str.substring(o, o + size)
+/** @param {number} n */
+const removeTrailingZeros = n => {
+	while (n % 10 === 0 && n !== 0) {
+		n = n / 10
 	}
-
-	return chunks
-}
-
-const encodingAlphabet = [
-	"0",
-	"1",
-	"2",
-	"3",
-	"4",
-	"5",
-	"6",
-	"7",
-	"8",
-	"9",
-	"A",
-	"B",
-	"C",
-	"D",
-	"E",
-	"F",
-	"G",
-	"H",
-	"Y",
-	"J",
-	"K",
-	"L",
-	"M",
-	"N",
-	"Z",
-	"P",
-	"Q",
-	"R",
-	"S",
-	"T",
-	"U",
-	"V",
-	"W",
-	"X",
-]
-
-/** @type {(radix: number) => (n: number) => string} */
-const encodeBase = radix => n => {
-	const alphabet = encodingAlphabet.slice(0, radix)
-
-	if (n === 0) return alphabet[0]
-
-	let result = ""
-	const base = alphabet.length
-
-	while (n > 0) {
-		result = alphabet[n % base] + result
-		n = Math.floor(n / base)
-	}
-
-	return result
-}
-
-/** @type {(radix: number) => (str: string) => number} */
-const decodeBase = radix => str => {
-	const alphabet = encodingAlphabet.slice(0, radix)
-	const base = alphabet.length
-	let number = 0
-
-	for (let i = 0; i < str.length; i++) {
-		number = number * base + alphabet.indexOf(str[i])
-	}
-
-	return number
-}
-
-export const Base14 = {
-	encode: encodeBase(14),
-	decode: decodeBase(14),
-}
-
-export const Base19 = {
-	encode: encodeBase(19),
-	decode: decodeBase(19),
-}
-
-export const Base32 = {
-	encode: encodeBase(32),
-	decode: decodeBase(32),
-}
-
-export const Base34 = {
-	encode: encodeBase(34),
-	decode: decodeBase(34),
+	return n
 }

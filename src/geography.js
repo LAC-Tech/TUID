@@ -14,12 +14,28 @@ const Coord = {
 	 * @param {number} n
 	 */
 	normalize: n => {
-		const intPart = Math.trunc(n)
-		check.isInt(intPart, "intPart")
-		const fractionalPart = Math.abs(n - intPart)
-		const newFractionalPart = Math.trunc(fractionalPart * 1e6) / 1e6
-		console.log({ n, intPart, newFractionalPart })
-		return intPart + newFractionalPart
+		const embiggened = n * 1e6
+		const truncated = Math.trunc(embiggened)
+		const normalized = truncated / 1e6
+		const notNegativeZero = normalized == -0 ? 0 : normalized
+
+		console.log("Normalizing coordinates:")
+		console.log({ n, embiggened, truncated, normalized, notNegativeZero })
+		return notNegativeZero
+	},
+
+	/**
+	 * @param {(n: number) => string} numeralEncode
+	 * @param {number} n
+	 */
+	encode: (numeralEncode, n) => {
+		const numeral = numeralEncode(n)
+		const decimal = Decimal.encode(n)
+		const result = numeral.concat(decimal).padStart(6, "0")
+		console.log("Encoding coordinate:")
+		console.log({ n, numeral, decimal, result })
+		check.len(result, "result", 6)
+		return result
 	},
 
 	/**
@@ -32,18 +48,15 @@ const Coord = {
 		const decimalPart = s.slice(2)
 		const numeral = numeralDecode(numeralPart)
 		const decimal = Decimal.decode(decimalPart ?? "000")
-		return numeral + decimal
-	},
-
-	/**
-	 * @param {(n: number) => string} numeralEncode
-	 * @param {number} n
-	 */
-	encode: (numeralEncode, n) => {
-		const numeral = numeralEncode(n)
-		const decimal = Decimal.encode(n)
-		const result = numeral.concat(decimal).padStart(6, "0")
-		check.len(result, "result", 6)
+		const result = numeral + decimal
+		console.log("Decoding coordinate:")
+		console.log({
+			s,
+			parts: [numeralPart, decimalPart],
+			numeral,
+			decimal,
+			result,
+		})
 		return result
 	},
 }
@@ -90,20 +103,6 @@ export class Longitude {
 		check.bounds(long.n, "longitude", [-180, 180])
 		return long
 	}
-}
-
-const LongitudeNumeral = {
-	/** @param {number} longitude */
-	encode: longitude => Base19.encode(Math.floor(longitude) + 180),
-	/** @type {(s: string) => number} */
-	decode: s => Base19.decode(s) - 180,
-}
-
-const LatitudeNumeral = {
-	/** @param {number} latitude */
-	encode: latitude => Base14.encode(Math.floor(latitude) + 90),
-	/** @type {(s: string) => number} */
-	decode: s => Base14.decode(s) - 90,
 }
 
 /** @param {number} n */
