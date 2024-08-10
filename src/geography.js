@@ -27,11 +27,13 @@ const Coord = {
 	 * @param {number} n
 	 */
 	encode: (numeralEncode, n) => {
-		const numeral = numeralEncode(n)
-		const decimal = Decimal.encode((n - Math.round(n)) * 1e6)
-		const result = numeral.concat(decimal).padStart(6, "0")
+		const numeral = Math.floor(n)
+		const encodedNumeral = numeralEncode(Math.floor(n))
+		const decimal = Math.abs((n - Math.round(n)) * 1e6)
+		const encodedDecimal = Decimal.encode(decimal)
+		const result = encodedNumeral.concat(encodedDecimal).padStart(6, "0")
 		console.log("ENCODING:")
-		console.log({ n, numeral, decimal, result })
+		console.log({ n, numeral, encodedNumeral, decimal, encodedDecimal, result })
 		check.len(result, "result", 6)
 		return result
 	},
@@ -46,9 +48,7 @@ const Coord = {
 		const decimalPart = s.slice(2)
 		const numeral = numeralDecode(numeralPart)
 		const decimal = Decimal.decode(decimalPart ?? "000")
-		const result = parseFloat(
-			`${numeral}.${decimal.toString().padStart(6, "0")}`
-		)
+		const result = createNumber(numeral, decimal)
 		console.log("DECODING:")
 		console.log({
 			s,
@@ -60,6 +60,20 @@ const Coord = {
 		console.log("----------------")
 		return result
 	},
+}
+
+/**
+ * TODO: horrible hack job
+ * @param {number} numeral
+ * @param {number} decimal
+ */
+const createNumber = (numeral, decimal) => {
+	const paddedDecimal = decimal.toString().padStart(6, "0")
+	if (0 > numeral) {
+		return parseFloat(`-${numeral + 1}.${paddedDecimal}`)
+	} else {
+		return parseFloat(`${numeral}.${paddedDecimal}`)
+	}
 }
 
 export class Latitude {
