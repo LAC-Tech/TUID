@@ -1,5 +1,5 @@
 import * as check from "./check.js"
-import { Base14, Base19, Base32 } from "./base.js"
+import { Base14, Base19, Base32, Base34 } from "./base.js"
 
 export const Decimal = {
 	/** @param {number} n */
@@ -12,11 +12,8 @@ export const Decimal = {
 			throw new Error(`expected safe integer, given ${n}`)
 		}
 
-		if (n % 10 == 0) {
-			throw new Error(`expected int with no trailing 0s, given ${n}`)
-		}
 		check.isInt(n, "decimal encoding input")
-		const sixDigits = n.toString().padEnd(6, "0")
+		const sixDigits = n.toString().padStart(6, "0")
 		check.len(sixDigits, "six digits to decimal encode", 6)
 
 		const strParts = [sixDigits.slice(0, 3), sixDigits.slice(3, 6)]
@@ -24,7 +21,6 @@ export const Decimal = {
 		const result = strParts
 			.map(s => Base32.encode(parseInt(s)).padStart(2, "0"))
 			.join("")
-
 		check.len(result, "encoded decimal", 4)
 		return result
 	},
@@ -34,8 +30,7 @@ export const Decimal = {
 		check.len(s, "decoded decimal", 4)
 		const strParts = [s.slice(0, 2), s.slice(2, 4)]
 		const decodedParts = strParts.map(Base32.decode)
-		const n = 1000 * decodedParts[0] + decodedParts[1]
-		return removeTrailingZeros(n)
+		return 1000 * decodedParts[0] + decodedParts[1]
 	},
 }
 
@@ -61,3 +56,27 @@ const removeTrailingZeros = n => {
 	}
 	return n
 }
+
+/**
+ * @param {string} label
+ * @param {[number, number]} bounds
+ * @param {number} length
+ */
+export const CheckedBase34 = (label, bounds, length) => ({
+	/** @type {(n: number) => string} */
+	encode: n => {
+		check.isInt(n, "n")
+		check.bounds(n, "n", bounds)
+		const result = Base34.encode(n).padStart(length, "0")
+		check.len(result, label, length)
+		return result
+	},
+
+	/** @type {(s: string) => number} */
+	decode: s => {
+		check.len(s, label, length)
+		const result = Base34.decode(s)
+		check.bounds(result, "result", bounds)
+		return result
+	},
+})

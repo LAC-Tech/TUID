@@ -7,7 +7,7 @@ describe("encoding/decoding is reversible", () => {
 	test("Decimal portion of lat or long", () => {
 		fc.assert(
 			fc.property(
-				fc.nat({ max: 999999 }).filter(n => n % 10 !== 0),
+				fc.nat({ max: 999999 }),
 				/** @param {number} n */
 				n => {
 					const actual = Decimal.decode(Decimal.encode(n))
@@ -16,6 +16,7 @@ describe("encoding/decoding is reversible", () => {
 			)
 		)
 	})
+
 	test("latitude integer", () =>
 		fc.assert(
 			fc.property(
@@ -27,6 +28,7 @@ describe("encoding/decoding is reversible", () => {
 				}
 			)
 		))
+
 	test("longitude integer", () =>
 		fc.assert(
 			fc.property(

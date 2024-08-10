@@ -1,6 +1,6 @@
 // This module was made purely so I could test more code.
 // It should rightfully be in nli.js
-import { Base14, Base19, Base34, Decimal } from "./num.js"
+import { Decimal, Integer, CheckedBase34 } from "./num.js"
 import * as check from "./check.js"
 
 // Common functionality for lat and long
@@ -19,8 +19,6 @@ const Coord = {
 		const normalized = truncated / 1e6
 		const notNegativeZero = normalized == -0 ? 0 : normalized
 
-		console.log("Normalizing coordinates:")
-		console.log({ n, embiggened, truncated, normalized, notNegativeZero })
 		return notNegativeZero
 	},
 
@@ -30,9 +28,9 @@ const Coord = {
 	 */
 	encode: (numeralEncode, n) => {
 		const numeral = numeralEncode(n)
-		const decimal = Decimal.encode(n)
+		const decimal = Decimal.encode((n - Math.round(n)) * 1e6)
 		const result = numeral.concat(decimal).padStart(6, "0")
-		console.log("Encoding coordinate:")
+		console.log("ENCODING:")
 		console.log({ n, numeral, decimal, result })
 		check.len(result, "result", 6)
 		return result
@@ -49,7 +47,7 @@ const Coord = {
 		const numeral = numeralDecode(numeralPart)
 		const decimal = Decimal.decode(decimalPart ?? "000")
 		const result = numeral + decimal
-		console.log("Decoding coordinate:")
+		console.log("DECODING:")
 		console.log({
 			s,
 			parts: [numeralPart, decimalPart],
@@ -57,6 +55,7 @@ const Coord = {
 			decimal,
 			result,
 		})
+		console.log("----------------")
 		return result
 	},
 }
@@ -71,12 +70,12 @@ export class Latitude {
 	}
 
 	encode() {
-		return Coord.encode(LatitudeNumeral.encode, this.n)
+		return Coord.encode(Integer.latitude.encode, this.n)
 	}
 
 	/** @param {string} s */
 	static decode(s) {
-		const n = Coord.decode(LatitudeNumeral.decode, s)
+		const n = Coord.decode(Integer.latitude.decode, s)
 		const lat = new Latitude(n)
 		check.bounds(lat.n, "latitude", [-90, 90])
 		return lat
@@ -93,12 +92,12 @@ export class Longitude {
 	}
 
 	encode() {
-		return Coord.encode(LongitudeNumeral.encode, this.n)
+		return Coord.encode(Integer.longitude.encode, this.n)
 	}
 
 	/** @param {string} s */
 	static decode(s) {
-		const n = Coord.decode(LongitudeNumeral.decode, s)
+		const n = Coord.decode(Integer.longitude.decode, s)
 		const long = new Longitude(n)
 		check.bounds(long.n, "longitude", [-180, 180])
 		return long
@@ -140,44 +139,5 @@ export const GroundLevel = {
 	},
 }
 
-/**
- * @param {number} n
- * @param {string} label
- * @param {[number, number]} bounds
- * @param {number} length
- * @returns {string}
- */
-const encodeBase34 = (n, label, bounds, length) => {
-	check.bounds(n, "n", bounds)
-	const result = Base34.encode(n).padStart(length, "0")
-	check.len(result, label, length)
-	return result
-}
-
-/**
- * @param {string} s
- * @param {string} label
- * @param {[number, number]} bounds
- * @param {number} length
- * @returns {number}
- */
-const decodeBase34 = (s, label, bounds, length) => {
-	check.len(s, label, length)
-	const result = Base34.decode(s)
-	check.bounds(result, "result", bounds)
-	return result
-}
-
-const StoreyBase34 = {
-	/** @param {number} n */
-	encode: n => encodeBase34(n, "storey", [0, 1156], 2),
-	/** @type {(s: string) => number} */
-	decode: s => decodeBase34(s, "storey", [0, 1156], 2),
-}
-
-const GroundBase34 = {
-	/** @param {number} n */
-	encode: n => encodeBase34(n, "ground", [0, 39304], 3),
-	/** @type {(s: string) => number} */
-	decode: s => decodeBase34(s, "ground", [0, 39304], 3),
-}
+const StoreyBase34 = CheckedBase34("storey", [0, 1156], 2)
+const GroundBase34 = CheckedBase34("ground", [0, 39304], 3)
