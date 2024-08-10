@@ -37,15 +37,29 @@ export const Decimal = {
 export const Integer = {
 	latitude: {
 		/** @param {number} latitude */
-		encode: latitude => Base14.encode(Math.floor(latitude) + 90),
+		encode: latitude => {
+			check.isInt(latitude, "latitude")
+			return Base14.encode(latitude + 90)
+		},
 		/** @type {(s: string) => number} */
-		decode: s => Base14.decode(s) - 90,
+		decode: s => {
+			const result = Base14.decode(s) - 90
+			check.isInt(result, "latitude")
+			return result
+		},
 	},
 	longitude: {
 		/** @param {number} longitude */
-		encode: longitude => Base19.encode(Math.floor(longitude) + 180),
+		encode: longitude => {
+			check.isInt(longitude, "longitude")
+			return Base19.encode(longitude + 180)
+		},
 		/** @type {(s: string) => number} */
-		decode: s => Base19.decode(s) - 180,
+		decode: s => {
+			const result = Base19.decode(s) - 180
+			check.isInt(result, "longitude")
+			return result
+		},
 	},
 }
 

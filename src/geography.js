@@ -46,7 +46,9 @@ const Coord = {
 		const decimalPart = s.slice(2)
 		const numeral = numeralDecode(numeralPart)
 		const decimal = Decimal.decode(decimalPart ?? "000")
-		const result = numeral + decimal
+		const result = parseFloat(
+			`${numeral}.${decimal.toString().padStart(6, "0")}`
+		)
 		console.log("DECODING:")
 		console.log({
 			s,

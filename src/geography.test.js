@@ -14,8 +14,13 @@ test("Ground level encoding examples from ISO", () => {
 	expect(GroundLevel.encode(-1000)).toBe("G4K")
 })
 
-test("TEMP TEST", () => {
+test("TEMP TEST 1", () => {
 	const actual = new Latitude(0.000001)
+	const expected = Latitude.decode(actual.encode())
+	expect(actual.n).toEqual(expected.n)
+})
+test("TEMP TEST 2", () => {
+	const actual = new Latitude(-0.000001)
 	const expected = Latitude.decode(actual.encode())
 	expect(actual.n).toEqual(expected.n)
 })
