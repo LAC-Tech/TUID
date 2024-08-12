@@ -1,5 +1,4 @@
 import { NLI } from "./nli.js"
-export { NLI } from "./nli.js"
 
 // Following the JSON api in the standard library
 /**
