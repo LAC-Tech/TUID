@@ -32,8 +32,6 @@ const Coord = {
 		const decimal = extractDecimal(n)
 		const encodedDecimal = Decimal.encode(decimal)
 		const result = encodedNumeral.concat(encodedDecimal).padStart(6, "0")
-		console.log("ENCODING:")
-		console.log({ n, numeral, decimal, result })
 		check.len(result, "result", 6)
 		return result
 	},
@@ -49,14 +47,6 @@ const Coord = {
 		const numeral = numeralDecode(numeralPart)
 		const decimal = Decimal.decode(decimalPart ?? "000")
 		const result = createNumber(numeral, decimal)
-		console.log("DECODING:")
-		console.log({
-			s,
-			numeral,
-			decimal,
-			result,
-		})
-		console.log("----------------")
 		return result
 	},
 }
