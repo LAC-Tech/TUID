@@ -29,11 +29,11 @@ const Coord = {
 	encode: (numeralEncode, n) => {
 		const numeral = Math.floor(n)
 		const encodedNumeral = numeralEncode(Math.floor(n))
-		const decimal = Math.abs((n - Math.round(n)) * 1e6)
+		const decimal = extractDecimal(n)
 		const encodedDecimal = Decimal.encode(decimal)
 		const result = encodedNumeral.concat(encodedDecimal).padStart(6, "0")
 		console.log("ENCODING:")
-		console.log({ n, numeral, encodedNumeral, decimal, encodedDecimal, result })
+		console.log({ n, numeral, decimal, result })
 		check.len(result, "result", 6)
 		return result
 	},
@@ -52,7 +52,6 @@ const Coord = {
 		console.log("DECODING:")
 		console.log({
 			s,
-			parts: [numeralPart, decimalPart],
 			numeral,
 			decimal,
 			result,
@@ -69,20 +68,32 @@ const Coord = {
  */
 const createNumber = (numeral, decimal) => {
 	const paddedDecimal = decimal.toString().padStart(6, "0")
-	if (0 > numeral) {
-		return parseFloat(`-${numeral + 1}.${paddedDecimal}`)
+	if (0 > numeral && decimal != 0) {
+		const adjustedNumeral = numeral + 1
+		const sign = adjustedNumeral == 0 ? "-" : ""
+		return parseFloat(`${sign}${adjustedNumeral}.${paddedDecimal}`)
 	} else {
 		return parseFloat(`${numeral}.${paddedDecimal}`)
 	}
 }
+/** @param {number} n */
+const extractDecimal = n => parseInt(n.toFixed(6).split(".")[1] || "0", 10)
 
 export class Latitude {
 	n
 
-	/** @param {number} n */
+	/**
+	 * @param {number} n
+	 * @private
+	 */
 	constructor(n) {
-		check.bounds(n, "latitude", [-90, 90])
-		this.n = Coord.normalize(n)
+		this.n = n
+	}
+
+	/** @param {number} n */
+	static fromRawFloat(n) {
+		check.bounds(n, "longitude", [-180, 180])
+		return new Latitude(Coord.normalize(n))
 	}
 
 	encode() {
@@ -101,10 +112,18 @@ export class Latitude {
 export class Longitude {
 	n
 
-	/** @param {number} n */
+	/**
+	 * @param {number} n
+	 * @private
+	 */
 	constructor(n) {
+		this.n = n
+	}
+
+	/** @param {number} n */
+	static fromRawFloat(n) {
 		check.bounds(n, "longitude", [-180, 180])
-		this.n = Coord.normalize(n)
+		return new Longitude(Coord.normalize(n))
 	}
 
 	encode() {
