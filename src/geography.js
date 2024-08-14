@@ -81,7 +81,7 @@ export class Latitude {
 	}
 
 	/** @param {number} n */
-	static fromRawFloat(n) {
+	static fromNum(n) {
 		check.bounds(n, "longitude", [-180, 180])
 		return new Latitude(Coord.normalize(n))
 	}
@@ -111,7 +111,7 @@ export class Longitude {
 	}
 
 	/** @param {number} n */
-	static fromRawFloat(n) {
+	static fromNum(n) {
 		check.bounds(n, "longitude", [-180, 180])
 		return new Longitude(Coord.normalize(n))
 	}

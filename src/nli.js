@@ -1,73 +1,42 @@
 import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
-/** @typedef {import('./types.d.ts').Elevation} Elevation */
+/**
+ * Natural Location Identifier
+ *
+ * @typedef {Object} NLI
+ * @property {Latitude} lat
+ * @property {Longitude} long
+ * @property {Elevation} elevation
+ *
+ * @typedef {import('./types.d.ts').Elevation} Elevation
+ */
 
-/** Natural location identifier. */
-export class NLI {
-	// At this point we are no longer hiding any information, so these are public
-	#lat
-	#long
-	elevation
+/**
+ * Produces a stand alone ISO NLI (with prefix)
+ * @type {(nli: NLI) => string}
+ */
+export const encodeISO = nli => `${prefix}${encode(nli)}`
 
-	/** @param {{lat: number, long: number, elevation: Elevation}} args */
-	static create({ lat, long, elevation }) {
-		return new NLI({
-			lat: Latitude.fromRawFloat(lat),
-			long: Longitude.fromRawFloat(long),
-			elevation,
-		})
-	}
-
-	/**
-	 * @param {{lat: Latitude, long: Longitude, elevation: Elevation}} args
-	 * @private
-	 */
-	constructor({ lat, long, elevation }) {
-		this.#lat = lat
-		this.#long = long
-		this.elevation = elevation
-	}
-
-	get lat() {
-		return this.#lat.n
-	}
-
-	get long() {
-		return this.#long.n
-	}
-
-	static prefix = "ISO.NLI:"
-
-	/**
-	 * Produces a stand alone NLI (with prefix)
-	 * @return {string}
-	 */
-	encode() {
-		return `${NLI.prefix}${this.encodeWithoutPrefix()}`
-	}
-
-	/**
-	 * Used as a part of TUID or another identifier.
-	 * @return {string}
-	 */
-	encodeWithoutPrefix() {
-		return `${this.#lat.encode()}-${this.#long.encode()}-${Elevation.encode(this.elevation)}`
-	}
-
-	/** @param {string} s */
-	static decode(s) {
-		const [latPart, longPart, elevationPart] = s
-			.replace(NLI.prefix, "")
-			.split("-")
-		const lat = Latitude.decode(latPart)
-		const long = Longitude.decode(longPart)
-		const elevation = Elevation.decode(elevationPart)
-		return new NLI({ lat, long, elevation })
-	}
-
-	toString() {
-		return `{lat: ${this.lat}, long: ${this.long}, elevation: ${JSON.stringify(this.elevation)}}`
-	}
+/**
+ * Used as a part of TUID or another identifier.
+ * @type {(nli: NLI) => string}
+ */
+export const encode = ({ lat, long, elevation }) => {
+	return `${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
 }
+
+/**
+ * Works whether there is a prefix or not
+ * @type {(s: string) => NLI}
+ */
+export const decode = s => {
+	const [latPart, longPart, elevationPart] = s.replace(prefix, "").split("-")
+	const lat = Latitude.decode(latPart)
+	const long = Longitude.decode(longPart)
+	const elevation = Elevation.decode(elevationPart)
+	return { lat, long, elevation }
+}
+
+const prefix = "ISO.NLI:"
 
 const Elevation = {
 	/** @param {Elevation} elevation */

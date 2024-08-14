@@ -1,5 +1,7 @@
 import { expect, test, describe } from "vitest"
 import fc from "fast-check"
+
+import * as arb from "./arbitraries.js"
 import { GroundLevel, Latitude, Longitude, Storey } from "./geography.js"
 
 test("Storey encoding examples from ISO", () => {
@@ -18,10 +20,10 @@ describe("encoding/decoding is reversible", () => {
 	test("latitude", () =>
 		fc.assert(
 			fc.property(
-				fc.double({ min: -90, max: 90, noNaN: true }),
+				arb.Lat,
 				/** @param {number} n */
 				n => {
-					const actual = Latitude.fromRawFloat(n)
+					const actual = Latitude.fromNum(n)
 					const expected = Latitude.decode(actual.encode())
 					expect(actual.n).toEqual(expected.n)
 				}
@@ -31,10 +33,10 @@ describe("encoding/decoding is reversible", () => {
 	test("longitude", () => {
 		fc.assert(
 			fc.property(
-				fc.double({ min: -180, max: 180, noNaN: true }),
+				arb.Long,
 				/** @param {number} n */
 				n => {
-					const actual = Longitude.fromRawFloat(n)
+					const actual = Longitude.fromNum(n)
 					const expected = Longitude.decode(actual.encode())
 					expect(actual.n).toEqual(expected.n)
 				}
@@ -45,7 +47,7 @@ describe("encoding/decoding is reversible", () => {
 	test("ground level", () => {
 		fc.assert(
 			fc.property(
-				fc.integer({ min: -19652, max: 19651 }),
+				arb.GroundLevel,
 				/** @param {number} actual */
 				actual => {
 					const expected = GroundLevel.decode(GroundLevel.encode(actual))
@@ -58,7 +60,7 @@ describe("encoding/decoding is reversible", () => {
 	test("storey", () => {
 		fc.assert(
 			fc.property(
-				fc.integer({ min: -578, max: 577 }),
+				arb.Storey,
 				/** @param {number} actual */
 				actual => {
 					const expected = Storey.decode(Storey.encode(actual))

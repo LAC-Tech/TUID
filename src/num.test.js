@@ -1,13 +1,14 @@
 import { expect, test, describe } from "vitest"
 import fc from "fast-check"
 
+import * as arb from "./arbitraries.js"
 import { Decimal, Integer } from "./num.js"
 
 describe("encoding/decoding is reversible", () => {
 	test("Decimal portion of lat or long", () => {
 		fc.assert(
 			fc.property(
-				fc.nat({ max: 999999 }),
+				arb.Decimal,
 				/** @param {number} n */
 				n => {
 					const actual = Decimal.decode(Decimal.encode(n))
@@ -20,7 +21,7 @@ describe("encoding/decoding is reversible", () => {
 	test("latitude integer", () =>
 		fc.assert(
 			fc.property(
-				fc.integer({ min: -90, max: 90 }),
+				arb.Lat,
 				/** @param {number} n */
 				n => {
 					const actual = Integer.latitude.decode(Integer.latitude.encode(n))
@@ -32,7 +33,7 @@ describe("encoding/decoding is reversible", () => {
 	test("longitude integer", () =>
 		fc.assert(
 			fc.property(
-				fc.integer({ min: -180, max: 180 }),
+				arb.Long,
 				/** @param {number} n */
 				n => {
 					const actual = Integer.longitude.decode(Integer.longitude.encode(n))
