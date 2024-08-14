@@ -81,5 +81,5 @@ test("Ikamatua Hotel, Ikamatua", () => {
 })
 
 describe("encoding/decoding is reversible", () => {
-	test("NLI", () => fc.assert(fc.property(arb.NLI, testIfReversible)))
+	test("NLI", () => fc.assert(fc.property(arb.nli, testIfReversible)))
 })

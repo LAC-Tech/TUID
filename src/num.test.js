@@ -8,7 +8,7 @@ describe("encoding/decoding is reversible", () => {
 	test("Decimal portion of lat or long", () => {
 		fc.assert(
 			fc.property(
-				arb.Decimal,
+				arb.decimal,
 				/** @param {number} n */
 				n => {
 					const actual = Decimal.decode(Decimal.encode(n))
@@ -21,7 +21,7 @@ describe("encoding/decoding is reversible", () => {
 	test("latitude integer", () =>
 		fc.assert(
 			fc.property(
-				arb.Lat,
+				arb.latNum,
 				/** @param {number} n */
 				n => {
 					const actual = Integer.latitude.decode(Integer.latitude.encode(n))
@@ -33,7 +33,7 @@ describe("encoding/decoding is reversible", () => {
 	test("longitude integer", () =>
 		fc.assert(
 			fc.property(
-				arb.Long,
+				arb.longNum,
 				/** @param {number} n */
 				n => {
 					const actual = Integer.longitude.decode(Integer.longitude.encode(n))

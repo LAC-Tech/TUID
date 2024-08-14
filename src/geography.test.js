@@ -20,7 +20,7 @@ describe("encoding/decoding is reversible", () => {
 	test("latitude", () =>
 		fc.assert(
 			fc.property(
-				arb.Lat,
+				arb.latNum,
 				/** @param {number} n */
 				n => {
 					const actual = Latitude.fromNum(n)
@@ -33,7 +33,7 @@ describe("encoding/decoding is reversible", () => {
 	test("longitude", () => {
 		fc.assert(
 			fc.property(
-				arb.Long,
+				arb.longNum,
 				/** @param {number} n */
 				n => {
 					const actual = Longitude.fromNum(n)
@@ -47,7 +47,7 @@ describe("encoding/decoding is reversible", () => {
 	test("ground level", () => {
 		fc.assert(
 			fc.property(
-				arb.GroundLevel,
+				arb.groundLevel,
 				/** @param {number} actual */
 				actual => {
 					const expected = GroundLevel.decode(GroundLevel.encode(actual))
@@ -60,7 +60,7 @@ describe("encoding/decoding is reversible", () => {
 	test("storey", () => {
 		fc.assert(
 			fc.property(
-				arb.Storey,
+				arb.storey,
 				/** @param {number} actual */
 				actual => {
 					const expected = Storey.decode(Storey.encode(actual))
