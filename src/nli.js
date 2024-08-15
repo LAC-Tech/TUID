@@ -9,7 +9,7 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 /** @type {(lat: number, long: number, elevation: Elevation) => NLI} */
 export const create = (lat, long, elevation) => ({
 	lat: Latitude.fromNum(lat),
-	long: Latitude.fromNum(long),
+	long: Longitude.fromNum(long),
 	elevation,
 })
 
@@ -46,8 +46,8 @@ const Elevation = {
 	encode: elevation => {
 		if ("storey" in elevation) {
 			return Storey.encode(elevation.storey)
-		} else if ("ground" in elevation) {
-			return GroundLevel.encode(elevation.ground)
+		} else if ("groundLevel" in elevation) {
+			return GroundLevel.encode(elevation.groundLevel)
 		} else {
 			throw new Error("unknown elevation type")
 		}
@@ -56,7 +56,7 @@ const Elevation = {
 	/** @type {(s: string) => Elevation} */
 	decode: s => {
 		if (s.length == 3) {
-			return { ground: GroundLevel.decode(s) }
+			return { groundLevel: GroundLevel.decode(s) }
 		} else if (s.length == 2) {
 			return { storey: Storey.decode(s) }
 		} else {
