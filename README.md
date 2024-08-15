@@ -1,4 +1,6 @@
-Example usage, in the node repl:
+This is the reference implementation for the The Transport Unit Identifier, or TUID. TUIDs are an ISO standard ID that identifies loads in the logistics industry.
+
+A TUID contains two NLIS. Example of creating an NLI, from the node REPL:
 
 ```js
 let nli = await import("./src/nli.js")
