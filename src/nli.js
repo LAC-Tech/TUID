@@ -2,13 +2,16 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 /**
  * Natural Location Identifier
  *
- * @typedef {Object} NLI
- * @property {Latitude} lat
- * @property {Longitude} long
- * @property {Elevation} elevation
- *
+ * @typedef {import("./types.d.ts").NLI} NLI
  * @typedef {import('./types.d.ts').Elevation} Elevation
  */
+
+/** @type {(lat: number, long: number, elevation: Elevation) => NLI} */
+export const create = (lat, long, elevation) => ({
+	lat: Latitude.fromNum(lat),
+	long: Latitude.fromNum(long),
+	elevation,
+})
 
 /**
  * Produces a stand alone ISO NLI (with prefix)

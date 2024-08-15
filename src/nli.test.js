@@ -32,8 +32,8 @@ const testIfReversible = actual => {
 	const encoded = nli.encode(actual)
 	const expected = nli.decode(encoded)
 	expect(actual.elevation).toEqual(expected.elevation)
-	expect(actual.lat).toEqual(expected.lat)
-	expect(actual.long).toEqual(expected.long)
+	expect(actual.lat.n).toEqual(expected.lat.n)
+	expect(actual.long.n).toEqual(expected.long.n)
 }
 
 // NW quadrant

@@ -18,22 +18,27 @@ export const encode = ({
 	registeredPrefix,
 	txnRef,
 }) => {
-	const time = date.toISOString()
+	const year = date.getUTCFullYear()
+	const month = String(date.getUTCMonth() + 1).padStart(2, "0")
+	const day = String(date.getUTCDate()).padStart(2, "0")
+	const hours = String(date.getUTCHours()).padStart(2, "0")
+	const minutes = String(date.getUTCMinutes()).padStart(2, "0")
+
+	const d = `${year}${month}${day}T${hours}${minutes}`
+
 	const nlis = [origin, destination].map(nli.encode)
 
-	return `ISO.TUID:${time}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
+	return `ISO.TUID:${d}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
 }
 
 /** @type {(s: string) => TUID} */
 export const decode = s => {
-	const [time, origin, destination, registeredPrefix, txnRef] = s
-		.replace("ISO.TUID:", "")
-		.split(/(?<=Z)(?=[A-Z])/)
-	return {
-		date: new Date(time),
-		origin: nli.decode(origin),
-		destination: nli.decode(destination),
-		registeredPrefix: registeredPrefix.split(":")[0],
-		txnRef,
-	}
+	const prefix = s.slice(0, 9)
+	const date = s.slice(9, 22)
+	console.log({ prefix, date })
+	const origin = nli.decode(s.slice(22, 36))
+	const destination = nli.decode(s.slice(36, 50))
+	const [registeredPrefix, txnRef] = s.slice(50).split(":")
+
+	return { date, origin, destination, registeredPrefix, txnRef }
 }

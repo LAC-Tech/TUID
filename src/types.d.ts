@@ -3,7 +3,7 @@
  */
 
 import type { Latitude, Longitude } from "./geography.js"
-export type Elevation = { storey: number } | { ground: number }
+export type Elevation = { storey: number } | { groundLevel: number }
 export type NLI = { lat: Latitude; long: Longitude; elevation: Elevation }
 
 export type TUID = {

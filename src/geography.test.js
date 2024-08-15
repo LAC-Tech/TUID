@@ -4,16 +4,30 @@ import fc from "fast-check"
 import * as arb from "./arbitraries.js"
 import { GroundLevel, Latitude, Longitude, Storey } from "./geography.js"
 
-test("Storey encoding examples from ISO", () => {
-	expect(Storey.encode(0)).toBe("H0")
-	expect(Storey.encode(5)).toBe("H5")
-	expect(Storey.encode(-2)).toBe("GW")
-})
+describe("ISO Examples", () => {
+	test("Latitude encoding", () => {
+		expect(Latitude.fromNum(0).encode()).toEqual("660000")
+		expect(Latitude.fromNum(-90).encode()).toEqual("000000")
+		expect(Latitude.fromNum(90).encode()).toEqual("CC0000")
+	})
 
-test("Ground level encoding examples from ISO", () => {
-	expect(GroundLevel.encode(0)).toBe("H00")
-	expect(GroundLevel.encode(1000)).toBe("HTE")
-	expect(GroundLevel.encode(-1000)).toBe("G4K")
+	test("Longitude encoding", () => {
+		expect(Latitude.fromNum(-180).encode()).toEqual("000000")
+		expect(Latitude.fromNum(-90).encode()).toEqual("000000")
+		expect(Latitude.fromNum(90).encode()).toEqual("CC0000")
+	})
+
+	test("Storey encoding", () => {
+		expect(Storey.encode(0)).toBe("H0")
+		expect(Storey.encode(5)).toBe("H5")
+		expect(Storey.encode(-2)).toBe("GW")
+	})
+
+	test("Ground level encoding", () => {
+		expect(GroundLevel.encode(0)).toBe("H00")
+		expect(GroundLevel.encode(1000)).toBe("HTE")
+		expect(GroundLevel.encode(-1000)).toBe("G4K")
+	})
 })
 
 describe("encoding/decoding is reversible", () => {
