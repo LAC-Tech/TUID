@@ -1,3 +1,4 @@
+import * as check from "./check.js"
 import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 /**
  * Natural Location Identifier
@@ -23,9 +24,8 @@ export const encodeISO = nli => `${prefix}${encode(nli)}`
  * Used as a part of TUID or another identifier.
  * @type {(nli: NLI) => string}
  */
-export const encode = ({ lat, long, elevation }) => {
-	return `${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
-}
+export const encode = ({ lat, long, elevation }) =>
+	`${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
 
 /**
  * Works whether there is a prefix or not
@@ -60,7 +60,7 @@ const Elevation = {
 		} else if (s.length == 2) {
 			return { storey: Storey.decode(s) }
 		} else {
-			throw new Error("not an elevation")
+			throw new Error(`expecting a length of 2 or 3, given ${s}`)
 		}
 	},
 }
