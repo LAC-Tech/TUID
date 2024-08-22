@@ -1,6 +1,5 @@
 import * as nli from "./nli.js"
 
-// Following the JSON api in the standard library
 /**
  * This is the reference implementation for the The Transport Unit Identifier,
  * or TUID. TUIDs are an ISO standard ID that identifies loads in the
@@ -22,12 +21,13 @@ export const encode = tuid => {
 	const nlis = [tuid.origin, tuid.destination].map(nli.encode)
 	const { registeredPrefix, txnRef } = tuid
 
-	return `ISO.TUID:${date}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
+	return `${prefix}:${date}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
 }
+
+const prefix = "ISO,TUID"
 
 /** @type {(s: string) => TUID} */
 export const decode = s => {
-	const prefix = s.slice(0, 9)
 	const dateStr = s.slice(9, 22)
 
 	const year = parseInt(dateStr.slice(0, 4), 10)

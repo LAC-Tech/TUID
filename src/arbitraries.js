@@ -6,21 +6,29 @@ export const longNum = fc.integer({ min: -180, max: 180 })
 // Decimal portion of lat or long, max 6 dp
 export const decimal = fc.nat({ max: 999999 })
 
+const point = fc.record({
+	lat: latNum.map(Latitude.fromNum),
+	long: longNum.map(Longitude.fromNum),
+})
+
 export const groundLevel = fc.integer({ min: -19652, max: 19651 })
 export const storey = fc.integer({ min: -578, max: 577 })
 
-/** @type {fc.Arbitrary<import("./types.d.ts").NLI>} */
-export const nli = fc.record({
-	lat: latNum.map(Latitude.fromNum),
-	long: longNum.map(Longitude.fromNum),
-	elevation: fc.oneof(fc.record({ storey }), fc.record({ groundLevel })),
-})
+/** @type {fc.Arbitrary<import("./types.d.ts").StoreyNLI>} */
+export const storeyNli = fc
+	.tuple(point, storey)
+	.map(([p, storey]) => ({ ...p, storey }))
+
+/** @type {fc.Arbitrary<import("./types.d.ts").GroundLevelNLI>} */
+export const groundLevelNli = fc
+	.tuple(point, groundLevel)
+	.map(([p, groundLevel]) => ({ ...p, groundLevel }))
 
 /** @type {fc.Arbitrary<import("./types.d.ts").TUID>} */
 export const tuid = fc.record({
 	date: fc.date(),
-	origin: nli,
-	destination: nli,
+	origin: storeyNli,
+	destination: storeyNli,
 	registeredPrefix: fc.string(),
 	txnRef: fc.string(),
 })

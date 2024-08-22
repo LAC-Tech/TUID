@@ -9,9 +9,14 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
 
 /** @type {(lat: number, long: number, elevation: Elevation) => NLI} */
 export const create = (lat, long, elevation) => ({
+	...point(lat, long),
+	...elevation,
+})
+
+/** @type {(lat: number, long: number) => import("./types.d.ts").Point} */
+const point = (lat, long) => ({
 	lat: Latitude.fromNum(lat),
 	long: Longitude.fromNum(long),
-	elevation,
 })
 
 /**
@@ -24,7 +29,7 @@ export const encodeISO = nli => `${prefix}${encode(nli)}`
  * Used as a part of TUID or another identifier.
  * @type {(nli: NLI) => string}
  */
-export const encode = ({ lat, long, elevation }) =>
+export const encode = ({ lat, long, ...elevation }) =>
 	`${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
 
 /**
@@ -36,7 +41,7 @@ export const decode = s => {
 	const lat = Latitude.decode(latPart)
 	const long = Longitude.decode(longPart)
 	const elevation = Elevation.decode(elevationPart)
-	return { lat, long, elevation }
+	return { lat, long, ...elevation }
 }
 
 const prefix = "ISO.NLI:"
