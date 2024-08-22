@@ -4,6 +4,7 @@ import { Latitude, Longitude, Storey, GroundLevel } from "./geography.js"
  * Natural Location Identifier
  *
  * @typedef {import("./types.d.ts").NLI} NLI
+ * @typedef {import("./types.d.ts").StoreyNLI} StoreyNLI
  * @typedef {import('./types.d.ts').Elevation} Elevation
  */
 
@@ -23,28 +24,36 @@ const point = (lat, long) => ({
  * Produces a stand alone ISO NLI (with prefix)
  * @type {(nli: NLI) => string}
  */
-export const encodeISO = nli => `${prefix}${encode(nli)}`
+export const encodeISO = ({ lat, long, ...elevation }) =>
+	`${prefix}:${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
 
-/**
- * Used as a part of TUID or another identifier.
- * @type {(nli: NLI) => string}
- */
-export const encode = ({ lat, long, ...elevation }) =>
-	`${lat.encode()}-${long.encode()}-${Elevation.encode(elevation)}`
-
-/**
- * Works whether there is a prefix or not
- * @type {(s: string) => NLI}
- */
-export const decode = s => {
-	const [latPart, longPart, elevationPart] = s.replace(prefix, "").split("-")
+/** @type {(s: string) => NLI} */
+export const decodeISO = s => {
+	const [_prefix, rest] = s.split(":")
+	const [latPart, longPart, elevationPart] = rest.split("-")
 	const lat = Latitude.decode(latPart)
 	const long = Longitude.decode(longPart)
 	const elevation = Elevation.decode(elevationPart)
 	return { lat, long, ...elevation }
 }
 
-const prefix = "ISO.NLI:"
+const prefix = "ISO.NLI"
+
+/** @type {(nli: StoreyNLI) => string} */
+export const encodeTUID = ({ lat, long, storey }) => {
+	const result = `${lat.encode()}${long.encode()}${Storey.encode(storey)}`
+	check.len(result, "encoded NLI for a TUID", 14)
+	return result
+}
+
+/** @type {(s: string) => StoreyNLI} */
+export const decodeTUID = s => {
+	check.len(s, "encoded NLI for a TUID", 14)
+	const lat = Latitude.decode(s.slice(0, 6))
+	const long = Longitude.decode(s.slice(6, 12))
+	const storey = Storey.decode(s.slice(12))
+	return { lat, long, storey }
+}
 
 const Elevation = {
 	/** @param {Elevation} elevation */

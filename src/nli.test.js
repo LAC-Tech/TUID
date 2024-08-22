@@ -28,15 +28,22 @@ import { Latitude, Longitude } from "./geography.js"
 //})
 
 /** @param {import("./types.d.ts").NLI} actual */
-const testIfReversible = actual => {
-	const encoded = nli.encode(actual)
-	const expected = nli.decode(encoded)
+const testIfISOReversible = actual => {
+	const encoded = nli.encodeISO(actual)
+	const expected = nli.decodeISO(encoded)
+	expect(actual).toStrictEqual(expected)
+}
+
+/** @param {import("./types.d.ts").StoreyNLI} actual */
+const testIfTUIDReversible = actual => {
+	const encoded = nli.encodeTUID(actual)
+	const expected = nli.decodeTUID(encoded)
 	expect(actual).toStrictEqual(expected)
 }
 
 // NW quadrant
 test("Federal Maritime Commission, Washington DC", () => {
-	testIfReversible({
+	testIfISOReversible({
 		lat: Latitude.fromNum(38.900542),
 		long: Longitude.fromNum(-77.0102704),
 		storey: 0,
@@ -44,7 +51,7 @@ test("Federal Maritime Commission, Washington DC", () => {
 })
 
 test("Embassy of New Zealand in Washington DC", () => {
-	testIfReversible({
+	testIfISOReversible({
 		lat: Latitude.fromNum(38.918966),
 		long: Longitude.fromNum(-77.064241),
 		storey: 0,
@@ -53,7 +60,7 @@ test("Embassy of New Zealand in Washington DC", () => {
 
 // SW Quadrant
 test("Falkland Islands Tourist Board, Stanley", () => {
-	testIfReversible({
+	testIfISOReversible({
 		lat: Latitude.fromNum(-51.692207),
 		long: Longitude.fromNum(-57.8589238),
 		storey: 0,
@@ -62,7 +69,7 @@ test("Falkland Islands Tourist Board, Stanley", () => {
 
 // NE Quadrant
 test("Xinyi Anhe Station, Taipei", () => {
-	testIfReversible({
+	testIfISOReversible({
 		lat: Latitude.fromNum(25.0331425),
 		long: Longitude.fromNum(121.5499456),
 		storey: 0,
@@ -71,15 +78,19 @@ test("Xinyi Anhe Station, Taipei", () => {
 
 // SE Quadrant
 test("Ikamatua Hotel, Ikamatua", () => {
-	testIfReversible({
+	testIfISOReversible({
 		lat: Latitude.fromNum(-42.271374),
 		long: Longitude.fromNum(171.684597),
 		storey: 0,
 	})
 })
 
-describe("encoding/decoding is reversible", () => {
-	test("Storey", () => fc.assert(fc.property(arb.storeyNli, testIfReversible)))
+describe("ISO encoding/decoding is reversible", () => {
+	test("Storey", () =>
+		fc.assert(fc.property(arb.storeyNli, testIfISOReversible)))
 	test("Ground Level", () =>
-		fc.assert(fc.property(arb.groundLevelNli, testIfReversible)))
+		fc.assert(fc.property(arb.groundLevelNli, testIfISOReversible)))
 })
+
+test("TUID encoding/decoding is reversible", () =>
+	fc.assert(fc.property(arb.storeyNli, testIfTUIDReversible)))
