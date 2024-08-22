@@ -38,8 +38,8 @@ export const decode = s => {
 
 	const date = new Date(Date.UTC(year, month, day, hours, minutes))
 
-	const origin = nli.decode(s.slice(22, 36))
-	const destination = nli.decode(s.slice(36, 50))
+	const origin = nli.decodeTUID(s.slice(22, 36))
+	const destination = nli.decodeTUID(s.slice(36, 50))
 	const [registeredPrefix, txnRef] = s.slice(50).split(":")
 
 	return { date, origin, destination, registeredPrefix, txnRef }
