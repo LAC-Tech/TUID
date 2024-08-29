@@ -18,7 +18,7 @@ export const encode = tuid => {
 	const minutes = String(tuid.date.getUTCMinutes()).padStart(2, "0")
 
 	const date = `${year}${month}${day}T${hours}${minutes}`
-	const nlis = [tuid.origin, tuid.destination].map(nli.encode)
+	const nlis = [tuid.origin, tuid.destination].map(nli.encodeTUID)
 	const { registeredPrefix, txnRef } = tuid
 
 	return `${prefix}:${date}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
@@ -36,7 +36,10 @@ export const decode = s => {
 	const hours = parseInt(dateStr.slice(9, 11), 10)
 	const minutes = parseInt(dateStr.slice(11, 13), 10)
 
-	const date = new Date(Date.UTC(year, month, day, hours, minutes))
+	const date = new Date()
+	date.setUTCFullYear(year)
+	date.setUTCMonth(month, day)
+	date.setUTCHours(hours, minutes)
 
 	const origin = nli.decodeTUID(s.slice(22, 36))
 	const destination = nli.decodeTUID(s.slice(36, 50))
