@@ -24,10 +24,17 @@ export const groundLevelNli = fc
 	.tuple(point, groundLevel)
 	.map(([p, groundLevel]) => ({ ...p, groundLevel }))
 
-export const date = fc.date({
-	min: new Date("0000-01-01T00:00:00.000Z"),
-	max: new Date("9999-12-31T23:59:59.999Z"),
-})
+export const date = fc
+	.date({
+		min: new Date("0000-01-01T00:00:00.000Z"),
+		max: new Date("9999-12-31T23:59:59.999Z"),
+	})
+	.map(d => {
+		// TUIDs only have minute precision
+		d.setUTCSeconds(0)
+		d.setUTCMilliseconds(0)
+		return d
+	})
 
 /** @type {fc.Arbitrary<import("./types.d.ts").TUID>} */
 export const tuid = fc.record({

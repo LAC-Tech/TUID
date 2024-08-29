@@ -10,10 +10,6 @@ describe("encoding/decoding is reversible", () => {
 				arb.date,
 				/** @param {Date} expected */
 				expected => {
-					// We only care about minute precision
-					expected.setUTCSeconds(0)
-					expected.setUTCMilliseconds(0)
-
 					const encoded = datetime.encode(expected)
 					const actual = datetime.decode(encoded)
 					expect(actual).toEqual(expected)

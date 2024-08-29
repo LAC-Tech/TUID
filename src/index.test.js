@@ -9,15 +9,16 @@ describe("encoding/decoding is reversible", () => {
 		fc.assert(
 			fc.property(
 				arb.tuid,
-				/** @param {import("./types.d.ts").TUID} actual */
-				actual => {
-					console.log("Actual:")
-					console.log(actual)
-					// TODO: test
-					const expected = tuid.decode(tuid.encode(actual))
-					console.log("Expected:")
-					console.log(expected)
-					expect(actual).toEqual(expected)
+				/** @param {import("./types.d.ts").TUID} expected */
+				expected => {
+					const encoded = tuid.encode(expected)
+					const actual = tuid.decode(encoded)
+					console.log({ expected, encoded, actual })
+					expect(actual.date).toEqual(expected.date)
+					expect(actual.origin).toEqual(expected.origin)
+					expect(actual.destination).toEqual(expected.destination)
+					expect(actual.txnRef).toEqual(expected.txnRef)
+					expect(actual.registeredPrefix).toEqual(expected.registeredPrefix)
 				}
 			)
 		))
