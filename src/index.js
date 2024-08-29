@@ -1,4 +1,5 @@
 import * as nli from "./nli.js"
+import * as datetime from "./datetime.js"
 
 /**
  * This is the reference implementation for the The Transport Unit Identifier,
@@ -29,17 +30,7 @@ const prefix = "ISO,TUID"
 /** @type {(s: string) => TUID} */
 export const decode = s => {
 	const dateStr = s.slice(9, 22)
-
-	const year = parseInt(dateStr.slice(0, 4), 10)
-	const month = parseInt(dateStr.slice(4, 6), 10) - 1
-	const day = parseInt(dateStr.slice(6, 8), 10)
-	const hours = parseInt(dateStr.slice(9, 11), 10)
-	const minutes = parseInt(dateStr.slice(11, 13), 10)
-
-	const date = new Date()
-	date.setUTCFullYear(year)
-	date.setUTCMonth(month, day)
-	date.setUTCHours(hours, minutes)
+	const date = datetime.decode(dateStr)
 
 	const origin = nli.decodeTUID(s.slice(22, 36))
 	const destination = nli.decodeTUID(s.slice(36, 50))
