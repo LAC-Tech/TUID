@@ -19,10 +19,10 @@ export const encode = tuid => {
 	const minutes = String(tuid.date.getUTCMinutes()).padStart(2, "0")
 
 	const date = `${year}${month}${day}T${hours}${minutes}`
-	const nlis = [tuid.origin, tuid.destination].map(nli.encodeTUID)
+	const [origin, dest] = [tuid.origin, tuid.destination].map(nli.encodeTUID)
 	const { registeredPrefix, txnRef } = tuid
 
-	return `${prefix}:${date}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
+	return `${prefix}:${date}${origin}${dest}${registeredPrefix}:${txnRef}`
 }
 
 const prefix = "ISO,TUID"
