@@ -25,7 +25,7 @@ export const encode = tuid => {
 	return `${prefix}:${date}${nlis[0]}${nlis[1]}${registeredPrefix}:${txnRef}`
 }
 
-const prefix = "ISO,TUID"
+const prefix = "ISO.TUID"
 
 /** @type {(s: string) => TUID} */
 export const decode = s => {
