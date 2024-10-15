@@ -90,7 +90,7 @@ export const CheckedBase34 = (label, bounds, length) => ({
 	decode: s => {
 		check.len(s, label, length)
 		const result = Base34.decode(s)
-		check.bounds(result, "result", bounds)
+		check.bounds(result, label, bounds)
 		return result
 	},
 })

@@ -42,5 +42,5 @@ export const tuid = fc.record({
 	origin: storeyNli,
 	destination: storeyNli,
 	registeredPrefix: fc.string(),
-	txnRef: fc.string(),
+	txnRef: fc.stringMatching(/^[A-Za-z0-9-]+$/),
 })
