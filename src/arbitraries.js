@@ -1,5 +1,5 @@
 import * as fc from "fast-check"
-import { Latitude, Longitude } from "./geography.js"
+import { Latitude, Longitude } from "@outdata/nli"
 
 export const latNum = fc.integer({ min: -90, max: 90 })
 export const longNum = fc.integer({ min: -180, max: 180 })

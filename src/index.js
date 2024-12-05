@@ -1,4 +1,4 @@
-import * as nli from "./nli.js"
+import * as nli from "@outdata/nli"
 import * as datetime from "./datetime.js"
 
 /**
