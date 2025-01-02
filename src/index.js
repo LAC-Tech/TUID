@@ -9,7 +9,6 @@ import * as datetime from "./datetime.js"
  * @typedef {import("./types.d.ts").NLI} NLI
  * @typedef {import("./types.d.ts").TUID} TUID
  */
-
 /** @type {(tuid: TUID) => string} */
 export const encode = tuid => {
 	const year = tuid.date.getUTCFullYear()

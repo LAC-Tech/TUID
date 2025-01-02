@@ -21,3 +21,20 @@ export type TUID = {
 	/** Internal transaction reference number of the buyer or shipper */
 	txnRef: string
 }
+
+export type ALEI = {
+	prefix: {
+		jurisdiction: {
+			/** ISO 3116-1 */
+			country: string
+			/** ISO 3116-2 */
+			subdivision?: string
+		}
+		register: string
+	}
+	/**
+	 * Issued by the jurisdiction, ie NZBN
+	 * Any char EXCEPT : or .
+	 */
+	identifier: string
+}
