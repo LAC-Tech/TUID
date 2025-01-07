@@ -1,5 +1,6 @@
 import * as nli from "@outdata/nli"
 import * as datetime from "./datetime.js"
+import * as alei from "./alei.js"
 
 /**
  * This is the reference implementation for the The Transport Unit Identifier,
@@ -33,7 +34,8 @@ export const decode = s => {
 
 	const origin = nli.decodeTUID(s.slice(22, 36))
 	const destination = nli.decodeTUID(s.slice(36, 50))
-	const [registeredPrefix, txnRef] = s.slice(50).split(":")
+	const [registeredPrefixStr, txnRef] = s.slice(50).split(":")
+	const registeredPrefix = alei.decode(registeredPrefixStr)
 
 	return { date, origin, destination, registeredPrefix, txnRef }
 }

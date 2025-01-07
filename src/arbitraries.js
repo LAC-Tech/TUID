@@ -36,11 +36,36 @@ export const date = fc
 		return d
 	})
 
+const capitalAsciiLetters = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+const asciiDigits = Array.from("0123456789")
+
+/** @type {fc.Arbitrary<import("./types.d.ts").ALEI>} */
+export const alei = fc.record({
+	prefix: fc.record({
+		jurisdiction: fc.record({
+			country: fc.string({
+				minLength: 2,
+				maxLength: 2,
+				unit: fc.constantFrom(...capitalAsciiLetters),
+			}),
+			subdivision: fc.option(
+				fc.string({
+					minLength: 2,
+					maxLength: 3,
+					unit: fc.constantFrom(...capitalAsciiLetters, ...asciiDigits),
+				})
+			),
+		}),
+		register: fc.string(),
+	}),
+	identifier: fc.string(),
+})
+
 /** @type {fc.Arbitrary<import("./types.d.ts").TUID>} */
 export const tuid = fc.record({
 	date,
 	origin: storeyNli,
 	destination: storeyNli,
-	registeredPrefix: fc.string(),
+	registeredPrefix: alei,
 	txnRef: fc.stringMatching(/^[A-Za-z0-9-]+$/),
 })

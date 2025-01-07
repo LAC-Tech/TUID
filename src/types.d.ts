@@ -2,10 +2,10 @@
  * @module types
  */
 
-import type { Latitude, Longitude } from "./geography.js"
+// TODO: get all of these from outdata module
+import type { StoreyNLI, Elevation } from "@outdata/nli"
 export type Point = { lat: Latitude; long: Longitude }
-export type Elevation = { storey: number } | { groundLevel: number }
-export type StoreyNLI = Point & { storey: number }
+export type { StoreyNLI, Elevation }
 export type GroundLevelNLI = Point & { groundLevel: number }
 export type NLI = StoreyNLI | GroundLevelNLI
 
@@ -17,7 +17,7 @@ export type TUID = {
 	/** Where the load is being sent to */
 	destination: StoreyNLI
 	/** Registered business number of the buyer */
-	registeredPrefix: string
+	registeredPrefix: ALEI // TODO: ALEI or GLEIF
 	/** Internal transaction reference number of the buyer or shipper */
 	txnRef: string
 }
@@ -25,9 +25,12 @@ export type TUID = {
 export type ALEI = {
 	prefix: {
 		jurisdiction: {
-			/** ISO 3116-1 */
+			/** ISO 3116-1, A-Z, two chars */
 			country: string
-			/** ISO 3116-2 */
+			/**
+			 * ISO 3116-2, A-Z and 0-9, 2-3 chars
+			 * This is a subset, only subdivisions that issue LEIs are used
+			 */
 			subdivision?: string
 		}
 		register: string
