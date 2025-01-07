@@ -58,7 +58,7 @@ export const alei = fc.record({
 		}),
 		register: fc.string(),
 	}),
-	identifier: fc.string(),
+	identifier: fc.string().filter(s => /[.:]/.test(s)),
 })
 
 /** @type {fc.Arbitrary<import("./types.d.ts").TUID>} */
