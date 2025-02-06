@@ -3,7 +3,17 @@
  * @return {string}
  */
 export const encode = alei => {
-	throw new Error("TODO")
+	// US-DE.BER:3031657
+	const {
+		prefix: {
+			jurisdiction: { country, subdivision },
+			register,
+		},
+		identifier,
+	} = alei
+
+	const jurisdiction = [country, subdivision ?? ""].join("-")
+	return `${jurisdiction}.${register}:${identifier}`
 }
 
 /**
@@ -11,5 +21,16 @@ export const encode = alei => {
  * @return {import("./types.ts").ALEI}
  */
 export const decode = s => {
-	throw new Error("TODO")
+	// US-DE.BER:3031657
+	const [prefix, identifier] = s.split(":")
+	const [jurisdiction, register] = prefix.split(".")
+	const [country, subdivision] = jurisdiction.split("-")
+
+	return {
+		prefix: {
+			jurisdiction: { country, subdivision },
+			register,
+		},
+		identifier,
+	}
 }
