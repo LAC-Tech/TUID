@@ -28,7 +28,10 @@ export const decode = s => {
 
 	return {
 		prefix: {
-			jurisdiction: { country, subdivision },
+			jurisdiction: {
+				country,
+				subdivision: subdivision.length === 0 ? undefined : subdivision,
+			},
 			register,
 		},
 		identifier,

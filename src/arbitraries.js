@@ -48,7 +48,8 @@ export const alei = fc.record({
 				maxLength: 2,
 				unit: fc.constantFrom(...capitalAsciiLetters),
 			}),
-			subdivision: fc.option(
+			subdivision: fc.oneof(
+				fc.constant(undefined),
 				fc.string({
 					minLength: 2,
 					maxLength: 3,
@@ -56,9 +57,9 @@ export const alei = fc.record({
 				})
 			),
 		}),
-		register: fc.string(),
+		register: fc.stringMatching(/^[a-zA-Z0-9]+$/),
 	}),
-	identifier: fc.string().filter(s => /[.:]/.test(s)),
+	identifier: fc.stringMatching(/^[a-zA-Z0-9]+$/),
 })
 
 /** @type {fc.Arbitrary<import("./types.d.ts").TUID>} */

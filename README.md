@@ -1,3 +1,8 @@
+# quick start
+
+npm i
+npm run test
+
 This is the reference implementation for the The Transport Unit Identifier, or TUID. TUIDs are an ISO standard ID that identifies loads in the logistics industry.
 
 # API Documentation

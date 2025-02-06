@@ -9,17 +9,22 @@ test("ECMMA ALEI", () => {
 	const actual = encode(decoded)
 	expect(actual).toEqual(expected)
 })
-//describe("encoding/decoding is reversible", () => {
-//	test("ALEI", () =>
-//		fc.assert(
-//			fc.property(
-//				arb.alei,
-//				/** @param {import("./types.js").ALEI} expected */
-//				expected => {
-//					const encoded = encode(expected)
-//					const actual = decode(encoded)
-//					expect(actual).toEqual(expected)
-//				}
-//			)
-//		))
-//})
+
+describe("encoding/decoding is reversible", () => {
+	test("ALEI", () =>
+		fc.assert(
+			fc.property(
+				arb.alei,
+				/** @param {import("./types.js").ALEI} expected */
+				expected => {
+					console.log("expected")
+					console.log(expected)
+					const encoded = encode(expected)
+					const actual = decode(encoded)
+					console.log("actual")
+					console.log(actual)
+					expect(actual).toEqual(expected)
+				}
+			)
+		))
+})
