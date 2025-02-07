@@ -30,7 +30,10 @@ export const decode = s => {
 		prefix: {
 			jurisdiction: {
 				country,
-				subdivision: subdivision.length === 0 ? undefined : subdivision,
+				subdivision:
+					subdivision === undefined || subdivision.length === 0
+						? undefined
+						: subdivision,
 			},
 			register,
 		},
