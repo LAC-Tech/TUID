@@ -11,8 +11,7 @@ export const encode = alei => {
 		},
 		identifier,
 	} = alei
-
-	const jurisdiction = [country, subdivision ?? ""].join("-")
+	const jurisdiction = subdivision ? `${country}-${subdivision}` : country
 	return `${jurisdiction}.${register}:${identifier}`
 }
 
@@ -23,6 +22,7 @@ export const encode = alei => {
 export const decode = s => {
 	// US-DE.BER:3031657
 	const [prefix, identifier] = s.split(":")
+	//console.log(`s = ${s}, identifier = ${identifier}`)
 	const [jurisdiction, register] = prefix.split(".")
 	const [country, subdivision] = jurisdiction.split("-")
 

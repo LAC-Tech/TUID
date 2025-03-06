@@ -21,8 +21,9 @@ export const encode = tuid => {
 	const date = `${year}${month}${day}T${hours}${minutes}`
 	const [origin, dest] = [tuid.origin, tuid.destination].map(nli.encodeTUID)
 	const { registeredPrefix, txnRef } = tuid
+	const a = alei.encode(registeredPrefix)
 
-	return `${prefix}:${date}${origin}${dest}${registeredPrefix}:${txnRef}`
+	return `${prefix}:${date}${origin}${dest}${a}:${txnRef}`
 }
 
 const prefix = "ISO,TUID"
@@ -34,8 +35,8 @@ export const decode = s => {
 
 	const origin = nli.decodeTUID(s.slice(22, 36))
 	const destination = nli.decodeTUID(s.slice(36, 50))
-	const [registeredPrefixStr, txnRef] = s.slice(50).split(":")
-	const registeredPrefix = alei.decode(registeredPrefixStr)
+	const [prefix, identifier, txnRef] = s.slice(50).split(":")
+	const registeredPrefix = alei.decode(`${prefix}:${identifier}`)
 
 	return { date, origin, destination, registeredPrefix, txnRef }
 }
